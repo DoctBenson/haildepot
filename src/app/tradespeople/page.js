@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { supabase } from '../supabaseClient'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-export default function TradespeopleListPage() {
+function TradespeopleContent() {
   const [tradespeople, setTradespeople] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('All')
@@ -90,5 +90,13 @@ export default function TradespeopleListPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function TradespeopleListPage() {
+  return (
+    <Suspense fallback={<p style={{ padding: '40px' }}>Loading...</p>}>
+      <TradespeopleContent />
+    </Suspense>
   )
 }
