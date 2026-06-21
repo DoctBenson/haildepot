@@ -74,7 +74,9 @@ function TradespeopleContent() {
           {tradespeople.map(person => (
             <div key={person.id} style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
               <div>
-                <h3 style={{ margin: '0 0 4px', color: '#0B1F2A' }}>{person.full_name}</h3>
+                <Link href={`/tradesperson/${person.id}`} style={{ textDecoration: 'none' }}>
+                 <h3 style={{ margin: '0 0 4px', color: '#1F6F8B', cursor: 'pointer' }}>{person.full_name}</h3>
+                </Link>
                 <p style={{ margin: '0 0 4px', color: '#1F6F8B', fontWeight: '600' }}>{person.trade}</p>
                 <p style={{ margin: '0 0 4px', color: '#6B7280', fontSize: '0.9rem' }}>📍 {person.location}</p>
                 {person.rate && <p style={{ margin: '0', color: '#6B7280', fontSize: '0.9rem' }}>💰 {person.rate}</p>}
