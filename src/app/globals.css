@@ -185,6 +185,12 @@ body {
     padding: 16px 20px;
   }
 
+  .hero {
+    padding: 60px 20px;
+    background-attachment: scroll;
+    min-height: auto;
+  }
+
   .hero h2 {
     font-size: 1.6rem;
   }
