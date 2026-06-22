@@ -12,18 +12,34 @@ export default function Home() {
         </div>
       </nav>
 
-      <section className="hero">
-        <h2>Find Trusted Tradespeople in Accra & Kasoa</h2>
-        <p>Book verified plumbers, electricians and painters instantly</p>
-        <div className="search-bar">
-          <select className="service-select">
-            <option value="">Select a service</option>
-            <option value="plumber">Plumber</option>
-            <option value="electrician">Electrician</option>
-            <option value="painter">Painter</option>
-          </select>
-          <Link href="/tradespeople" className="btn-search">Find Now</Link>
-        </div>
+      <section className="hero" style={{
+  backgroundImage: 'url(https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1600&q=80)',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  position: 'relative',
+  padding: '120px 20px'
+}}>
+  <div style={{
+    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+    background: 'rgba(11, 31, 42, 0.65)'
+  }} />
+  <div style={{ position: 'relative', zIndex: 1 }}>
+    <h2 style={{ fontSize: '2.8rem', fontWeight: '800', color: 'white', marginBottom: '16px', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto', textAlign: 'center' }}>
+      Find Trusted Tradespeople in Accra & Kasoa
+    </h2>
+    <p style={{ fontSize: '1.15rem', color: '#EAF4F7', marginBottom: '32px', textAlign: 'center' }}>
+      Book verified plumbers, electricians and painters instantly
+    </p>
+    <div className="search-bar">
+      <select className="service-select">
+        <option value="">Select a service</option>
+        <option value="plumber">Plumber</option>
+        <option value="electrician">Electrician</option>
+        <option value="painter">Painter</option>
+      </select>
+       <Link href="/tradespeople" className="btn-search">Find Now</Link>
+       </div>
+       </div>
       </section>
 
       <section className="how-it-works">
