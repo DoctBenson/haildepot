@@ -73,25 +73,36 @@ export default function CustomerDashboard() {
                 <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>Service</th>
                 <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>Date</th>
                 <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>Status</th>
+                <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>Review</th>
               </tr>
             </thead>
-            <tbody>
-              {bookings.map((booking, index) => (
-                <tr key={index} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                  <td style={{ padding: '12px' }}>{booking.service}</td>
-                  <td style={{ padding: '12px' }}>{booking.date}</td>
-                  <td style={{ padding: '12px' }}>
-                    <span style={{
-                      padding: '4px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '600',
-                      background: booking.status === 'completed' ? '#dcfce7' : booking.status === 'accepted' ? '#dbeafe' : '#fef3c7',
-                      color: booking.status === 'completed' ? '#16a34a' : booking.status === 'accepted' ? '#1d4ed8' : '#d97706'
-                    }}>
-                      {booking.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+           <tbody>
+      {bookings.map((booking, index) => (
+    <tr key={index} style={{ borderBottom: '1px solid #e5e7eb' }}>
+      <td style={{ padding: '12px' }}>{booking.service}</td>
+      <td style={{ padding: '12px' }}>{booking.date}</td>
+      <td style={{ padding: '12px' }}>
+        <span style={{
+          padding: '4px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '600',
+          background: booking.status === 'completed' ? '#dcfce7' : booking.status === 'accepted' ? '#dbeafe' : '#fef3c7',
+          color: booking.status === 'completed' ? '#16a34a' : booking.status === 'accepted' ? '#1d4ed8' : '#d97706'
+        }}>
+          {booking.status}
+        </span>
+        </td>
+       <td style={{ padding: '12px' }}>
+        {booking.status === 'completed' && (
+          <button
+            onClick={() => router.push(`/review/${booking.id}?tradesperson=${booking.tradesperson_id}`)}
+            style={{ padding: '6px 14px', background: '#1F6F8B', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}
+          >
+            Leave Review
+          </button>
+          )}
+           </td>
+           </tr>
+          ))}
+           </tbody>
           </table>
         )}
       </div>
