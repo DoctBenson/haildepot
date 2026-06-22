@@ -58,11 +58,16 @@ export default function TradespersonDashboard() {
         </div>
       </nav>
 
-      <div style={{ background: '#EAF4F7', border: '1px solid #1F6F8B', borderRadius: '12px', padding: '20px', marginBottom: '32px' }}>
-        <h2 style={{ margin: '0 0 8px', color: '#0B1F2A' }}>{profile?.full_name}</h2>
-        <p style={{ margin: '0 0 4px', color: '#1F6F8B', fontWeight: '600' }}>{profile?.trade}</p>
-        <p style={{ margin: '0', color: '#6B7280' }}>📍 {profile?.location}</p>
-      </div>
+      <div style={{ background: '#EAF4F7', border: '1px solid #1F6F8B', borderRadius: '12px', padding: '20px', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+  <div>
+    <h2 style={{ margin: '0 0 8px', color: '#0B1F2A' }}>{profile?.full_name}</h2>
+    <p style={{ margin: '0 0 4px', color: '#1F6F8B', fontWeight: '600' }}>{profile?.trade}</p>
+    <p style={{ margin: '0', color: '#6B7280' }}> {profile?.location}</p>
+  </div>
+  <Link href={`/tradesperson/${user?.id}`} style={{ padding: '10px 20px', background: '#1F6F8B', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem' }}>
+    View My Profile
+  </Link>
+</div>
 
       <div>
         <h2 style={{ marginBottom: '16px' }}>Incoming Bookings</h2>
