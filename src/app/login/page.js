@@ -37,31 +37,55 @@ export default function LoginPage() {
     }
   }
 
+  async function handleGoogleLogin() {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`
+      }
+    })
+  }
 
-return (
-  <div style={{ maxWidth: '400px', margin: '80px auto', padding: '20px' }}>
-    <h1 style={{ color: '#1F6F8B', marginBottom: '8px' }}>Hail Depot</h1>
-    <h2 style={{ marginBottom: '24px' }}>Welcome back</h2>
+  return (
+    <div style={{ maxWidth: '400px', margin: '80px auto', padding: '20px' }}>
+      <h1 style={{ color: '#1F6F8B', marginBottom: '8px' }}>Hail Depot</h1>
+      <h2 style={{ marginBottom: '24px' }}>Welcome back</h2>
 
-    {error && <p style={{ color: 'red', marginBottom: '16px' }}>{error}</p>}
+      {error && <p style={{ color: 'red', marginBottom: '16px' }}>{error}</p>}
 
-    <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-      <input type="email" placeholder="Email" value={email}
-        onChange={e => setEmail(e.target.value)}
-        style={{ padding: '12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '1rem' }} />
-      <input type="password" placeholder="Password" value={password}
-        onChange={e => setPassword(e.target.value)}
-        style={{ padding: '12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '1rem' }} />
-      <button type="submit" disabled={loading}
-        style={{ padding: '12px', background: '#1F6F8B', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '1rem' }}>
-        {loading ? 'Logging in...' : 'Login'}
+      <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <input type="email" placeholder="Email" value={email}
+          onChange={e => setEmail(e.target.value)}
+          style={{ padding: '12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '1rem' }} />
+        <input type="password" placeholder="Password" value={password}
+          onChange={e => setPassword(e.target.value)}
+          style={{ padding: '12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '1rem' }} />
+        <button type="submit" disabled={loading}
+          style={{ padding: '12px', background: '#1F6F8B', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '1rem' }}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+      </form>
+
+      <div style={{ textAlign: 'center', margin: '16px 0', color: '#6B7280' }}>or</div>
+
+      <button
+        onClick={handleGoogleLogin}
+        style={{
+          width: '100%', padding: '12px',
+          background: 'white', border: '1.5px solid #e5e7eb',
+          borderRadius: '8px', fontWeight: '600',
+          cursor: 'pointer', fontSize: '1rem',
+          display: 'flex', alignItems: 'center',
+          justifyContent: 'center', gap: '10px'
+        }}
+      >
+        <img src="https://www.google.com/favicon.ico" width="20" height="20" />
+        Continue with Google
       </button>
-    </form>
 
-    <p style={{ marginTop: '20px', textAlign: 'center', color: '#6B7280' }}>
-      Don't have an account? <Link href="/register" style={{ color: '#1F6F8B' }}>Sign up</Link>
-    </p>
-  </div>
- )
-
+      <p style={{ marginTop: '20px', textAlign: 'center', color: '#6B7280' }}>
+        Don't have an account? <Link href="/register" style={{ color: '#1F6F8B' }}>Sign up</Link>
+      </p>
+    </div>
+  )
 }
