@@ -10,33 +10,6 @@ body {
   color: #1f2937;
 }
 
-/* ====================== NAVBAR ====================== */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 40px;
-  background: white;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-}
-
-.logo {
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: #1F6F8B;
-}
-
-.nav-links {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: #374151;
-  font-weight: 500;
-}
 
 /* ====================== BUTTONS ====================== */
 .btn-primary {
@@ -181,9 +154,7 @@ body {
 
 /* ====================== MOBILE ====================== */
 @media (max-width: 600px) {
-  .navbar {
-    padding: 16px 20px;
-  }
+ 
 
   .hero {
     padding: 60px 20px;
