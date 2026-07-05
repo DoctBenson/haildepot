@@ -72,62 +72,90 @@ function TradespeopleContent() {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
           {tradespeople.map(person => (
-            <div key={person.id} style={{
-              background: 'white',
-              borderRadius: '16px',
-              overflow: 'hidden',
-              boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-              cursor: 'pointer'
-            }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-4px)'
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 2px 16px rgba(0,0,0,0.08)'
-              }}
-            >
-              <div style={{
-                width: '100%', height: '200px',
-                background: person.avatar_url ? `url(${person.avatar_url})` : '#EAF4F7',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                display: 'flex', alignItems: 'center', justifyContent: 'center'
-              }}>
-                {!person.avatar_url && (
-                  <div style={{ fontSize: '4rem', fontWeight: '800', color: '#1F6F8B' }}>
-                    {person.full_name?.charAt(0)}
-                  </div>
-                )}
-              </div>
+  <div key={person.id} style={{
+    background: '#0B1F2A',
+    borderRadius: '20px',
+    overflow: 'hidden',
+    boxShadow: '0 4px 24px rgba(0,0,0,0.2)',
+    transition: 'transform 0.2s',
+  }}
+    onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-6px)'}
+    onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+  >
+    {/* Photo */}
+    <div style={{
+      width: '100%', height: '220px',
+      background: person.avatar_url ? `url(${person.avatar_url})` : 'linear-gradient(135deg, #1F6F8B, #0B1F2A)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      display: 'flex', alignItems: 'flex-end',
+      padding: '16px',
+      position: 'relative'
+    }}>
+      {!person.avatar_url && (
+        <div style={{
+          position: 'absolute', top: '50%', left: '50%',
+          transform: 'translate(-50%, -50%)',
+          fontSize: '5rem', fontWeight: '900', color: 'rgba(255,255,255,0.15)'
+        }}>
+          {person.full_name?.charAt(0)}
+        </div>
+      )}
+      <span style={{
+        background: '#1F6F8B',
+        color: 'white',
+        padding: '4px 12px',
+        borderRadius: '20px',
+        fontSize: '0.8rem',
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        letterSpacing: '0.05em'
+      }}>
+        {person.trade}
+      </span>
+    </div>
 
-              <div style={{ padding: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
-                  <Link href={`/tradesperson/${person.id}`} style={{ textDecoration: 'none' }}>
-                    <h3 style={{ margin: '0', color: '#0B1F2A', fontSize: '1rem', fontWeight: '700' }}>{person.full_name}</h3>
-                  </Link>
-                  <span style={{ color: '#0B1F2A', fontSize: '0.85rem', fontWeight: '600' }}>⭐ New</span>
-                </div>
-                <p style={{ margin: '0 0 4px', color: '#6B7280', fontSize: '0.9rem' }}>{person.trade} · {person.location}</p>
-                <p style={{ margin: '0 0 12px', color: '#6B7280', fontSize: '0.85rem' }}>
-                  {person.bio ? person.bio.substring(0, 60) + '...' : 'Available for bookings'}
-                </p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <p style={{ margin: '0', color: '#0B1F2A', fontWeight: '700', fontSize: '0.95rem' }}>
-                    {person.rate || 'Rate on request'}
-                  </p>
-                  <Link
-                    href={`/book/${person.id}`}
-                    style={{ padding: '8px 20px', background: '#1F6F8B', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem' }}
-                  >
-                    Book
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
+    {/* Info */}
+    <div style={{ padding: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+        <Link href={`/tradesperson/${person.id}`} style={{ textDecoration: 'none' }}>
+          <h3 style={{ margin: '0', color: 'white', fontSize: '1.15rem', fontWeight: '800', letterSpacing: '-0.02em' }}>
+            {person.full_name}
+          </h3>
+        </Link>
+        <span style={{ color: '#EAF4F7', fontSize: '0.85rem', fontWeight: '600' }}>⭐ New</span>
+      </div>
+
+      <p style={{ margin: '0 0 4px', color: '#6B7280', fontSize: '0.85rem' }}>
+        📍 {person.location}
+      </p>
+
+      <p style={{ margin: '0 0 16px', color: '#9ca3af', fontSize: '0.85rem', lineHeight: '1.5' }}>
+        {person.bio ? person.bio.substring(0, 70) + '...' : 'Available for bookings in your area'}
+      </p>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <p style={{ margin: '0', color: 'white', fontWeight: '800', fontSize: '1rem' }}>
+            {person.rate || 'Rate on request'}
+          </p>
+        </div>
+        <Link href={`/book/${person.id}`} style={{
+          padding: '10px 24px',
+          background: '#1F6F8B',
+          color: 'white',
+          borderRadius: '10px',
+          textDecoration: 'none',
+          fontWeight: '700',
+          fontSize: '0.9rem',
+          letterSpacing: '0.02em'
+        }}>
+          Book Now
+        </Link>
+      </div>
+    </div>
+  </div>
+))}
         </div>
       )}
     </div>
