@@ -41,70 +41,153 @@ export default function CustomerDashboard() {
     router.push('/')
   }
 
-  if (!user) return <p style={{ padding: '40px' }}>Loading...</p>
+  if (!user) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <p style={{ color: '#6B7280' }}>Loading...</p>
+    </div>
+  )
 
   return (
-    <div style={{ maxWidth: '850px', margin: '0 auto', padding: '20px' }}>
-      <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', paddingBottom: '16px', borderBottom: '1px solid #e5e7eb' }}>
-        <h1 style={{ color: '#1F6F8B', fontSize: '1.6rem', fontWeight: '800' }}>Hail Depot</h1>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <span style={{ color: '#6B7280' }}>Hi, {profile?.full_name}</span>
-          <button onClick={handleLogout} style={{ padding: '8px 16px', background: '#0B1F2A', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Logout</button>
+    <div style={{ minHeight: '100vh', background: '#f9fafb' }}>
+      
+      {/* Navbar */}
+      <nav style={{
+        background: 'white',
+        borderBottom: '1px solid #e5e7eb',
+        padding: '0 32px',
+        height: '64px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        boxShadow: '0 1px 8px rgba(0,0,0,0.06)'
+      }}>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <span style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1F6F8B', letterSpacing: '-0.04em' }}>
+            Hail Depot
+          </span>
+        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <span style={{ color: '#6B7280', fontSize: '0.9rem' }}>
+            {profile?.full_name}
+          </span>
+          <button onClick={handleLogout} style={{
+            padding: '8px 16px',
+            background: 'transparent',
+            border: '1.5px solid #e5e7eb',
+            borderRadius: '24px',
+            cursor: 'pointer',
+            fontWeight: '600',
+            fontSize: '0.85rem',
+            color: '#0B1F2A'
+          }}>
+            Log out
+          </button>
         </div>
       </nav>
 
-      <div style={{ marginBottom: '32px' }}>
-        <h2 style={{ marginBottom: '16px' }}>Find a Tradesperson</h2>
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-          <Link href="/tradespeople?service=Plumber" style={{ padding: '16px 24px', background: '#EAF4F7', border: '2px solid #1F6F8B', borderRadius: '8px', textDecoration: 'none', color: '#0B1F2A', fontWeight: '600' }}>🔧 Plumber</Link>
-          <Link href="/tradespeople?service=Electrician" style={{ padding: '16px 24px', background: '#EAF4F7', border: '2px solid #1F6F8B', borderRadius: '8px', textDecoration: 'none', color: '#0B1F2A', fontWeight: '600' }}>⚡ Electrician</Link>
-          <Link href="/tradespeople?service=Painter" style={{ padding: '16px 24px', background: '#EAF4F7', border: '2px solid #1F6F8B', borderRadius: '8px', textDecoration: 'none', color: '#0B1F2A', fontWeight: '600' }}>🎨 Painter</Link>
-        </div>
-      </div>
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 20px' }}>
 
-      <div>
-        <h2 style={{ marginBottom: '16px' }}>My Bookings</h2>
-        {bookings.length === 0 ? (
-          <p style={{ color: '#6B7280' }}>No bookings yet. Find a tradesperson to get started!</p>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: '#f8fafc' }}>
-                <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>Service</th>
-                <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>Date</th>
-                <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>Status</th>
-                <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb' }}>Review</th>
-              </tr>
-            </thead>
-           <tbody>
-      {bookings.map((booking, index) => (
-    <tr key={index} style={{ borderBottom: '1px solid #e5e7eb' }}>
-      <td style={{ padding: '12px' }}>{booking.service}</td>
-      <td style={{ padding: '12px' }}>{booking.date}</td>
-      <td style={{ padding: '12px' }}>
-        <span style={{
-          padding: '4px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '600',
-          background: booking.status === 'completed' ? '#dcfce7' : booking.status === 'accepted' ? '#dbeafe' : '#fef3c7',
-          color: booking.status === 'completed' ? '#16a34a' : booking.status === 'accepted' ? '#1d4ed8' : '#d97706'
-        }}>
-          {booking.status}
-        </span>
-        </td>
-       <td style={{ padding: '12px' }}>
-        {booking.status === 'completed' && (
-          <button
-            onClick={() => router.push(`/review/${booking.id}?tradesperson=${booking.tradesperson_id}`)}
-            style={{ padding: '6px 14px', background: '#1F6F8B', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}
-          >
-            Leave Review
-          </button>
+        {/* Welcome */}
+        <div style={{ marginBottom: '32px' }}>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0B1F2A', marginBottom: '4px' }}>
+            Welcome back{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}
+          </h1>
+          <p style={{ color: '#6B7280', fontSize: '0.95rem' }}>Find and book trusted tradespeople in Accra & Kasoa</p>
+        </div>
+
+        {/* Service Cards */}
+        <div style={{ marginBottom: '40px' }}>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#0B1F2A', marginBottom: '16px' }}>
+            What do you need?
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '16px' }}>
+            {[
+              { label: 'Plumber', service: 'Plumber', bg: '#EAF4F7', icon: '🔧' },
+              { label: 'Electrician', service: 'Electrician', bg: '#fef3c7', icon: '⚡' },
+              { label: 'Painter', service: 'Painter', bg: '#fce7f3', icon: '🎨' },
+            ].map(item => (
+              <Link key={item.service} href={`/tradespeople?service=${item.service}`} style={{ textDecoration: 'none' }}>
+                <div style={{
+                  background: item.bg,
+                  borderRadius: '16px',
+                  padding: '24px 16px',
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s',
+                  border: '1px solid transparent'
+                }}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                  <div style={{ fontSize: '2rem', marginBottom: '8px' }}>{item.icon}</div>
+                  <p style={{ margin: '0', fontWeight: '700', color: '#0B1F2A', fontSize: '0.95rem' }}>{item.label}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Bookings */}
+        <div>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#0B1F2A', marginBottom: '16px' }}>
+            My Bookings
+          </h2>
+          {bookings.length === 0 ? (
+            <div style={{
+              background: 'white', borderRadius: '16px', padding: '40px',
+              textAlign: 'center', border: '1px solid #e5e7eb'
+            }}>
+              <p style={{ color: '#6B7280', marginBottom: '16px' }}>No bookings yet</p>
+              <Link href="/tradespeople" style={{
+                padding: '12px 24px', background: '#1F6F8B', color: 'white',
+                borderRadius: '8px', textDecoration: 'none', fontWeight: '600'
+              }}>
+                Find a Tradesperson
+              </Link>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {bookings.map((booking, index) => (
+                <div key={index} style={{
+                  background: 'white', borderRadius: '16px', padding: '20px',
+                  border: '1px solid #e5e7eb',
+                  display: 'flex', justifyContent: 'space-between',
+                  alignItems: 'center', flexWrap: 'wrap', gap: '12px'
+                }}>
+                  <div>
+                    <p style={{ margin: '0 0 4px', fontWeight: '700', color: '#0B1F2A' }}>{booking.service}</p>
+                    <p style={{ margin: '0 0 4px', color: '#6B7280', fontSize: '0.85rem' }}>📅 {booking.date} · 📍 {booking.location}</p>
+                    <p style={{ margin: '0', color: '#6B7280', fontSize: '0.85rem' }}>{booking.description}</p>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{
+                      padding: '6px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '700',
+                      background: booking.status === 'completed' ? '#dcfce7' : booking.status === 'accepted' ? '#dbeafe' : '#fef3c7',
+                      color: booking.status === 'completed' ? '#16a34a' : booking.status === 'accepted' ? '#1d4ed8' : '#d97706'
+                    }}>
+                      {booking.status}
+                    </span>
+                    {booking.status === 'completed' && (
+                      <button
+                        onClick={() => router.push(`/review/${booking.id}?tradesperson=${booking.tradesperson_id}`)}
+                        style={{
+                          padding: '6px 14px', background: '#1F6F8B', color: 'white',
+                          border: 'none', borderRadius: '8px', cursor: 'pointer',
+                          fontSize: '0.8rem', fontWeight: '600'
+                        }}
+                      >
+                        Leave Review
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
-           </td>
-           </tr>
-          ))}
-           </tbody>
-          </table>
-        )}
+        </div>
       </div>
     </div>
   )

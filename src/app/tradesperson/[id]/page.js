@@ -56,7 +56,7 @@ export default function TradespersonProfile({ params }) {
     setUploading(true)
 
     const fileExt = file.name.split('.').pop()
-    const fileName = `${id}.${fileExt}`
+    const fileName = `${id}/${id}.${fileExt}`
 
     const { error: uploadError } = await supabase.storage
       .from('profiles')
@@ -66,7 +66,10 @@ export default function TradespersonProfile({ params }) {
       const { data } = supabase.storage.from('profiles').getPublicUrl(fileName)
       await supabase.from('profiles').update({ avatar_url: data.publicUrl }).eq('id', id)
       setTradesperson({ ...tradesperson, avatar_url: data.publicUrl })
+    } else {
+      console.log('Upload error:', uploadError)
     }
+
     setUploading(false)
   }
 
