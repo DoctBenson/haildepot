@@ -104,7 +104,7 @@ export default function Home() {
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   position: 'relative',
-  padding: '120px 20px'
+  padding: '160px 20px'
 }}>
   <div style={{
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,

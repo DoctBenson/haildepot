@@ -46,8 +46,7 @@ body {
 /* ====================== HERO ====================== */
 .hero {
   text-align: center;
-  padding: 80px 20px;
-  background: linear-gradient(135deg, #EAF4F7, #d0eaf2);
+  position: relative;
 }
 
 .hero h2 {
@@ -155,12 +154,11 @@ body {
 /* ====================== MOBILE ====================== */
 @media (max-width: 600px) {
  
-
-  .hero {
-    padding: 60px 20px;
-    background-attachment: scroll;
-    min-height: auto;
-  }
+.hero {
+  padding: 80px 20px;
+  background-attachment: scroll;
+  min-height: auto;
+}
 
   .hero h2 {
     font-size: 1.6rem;
