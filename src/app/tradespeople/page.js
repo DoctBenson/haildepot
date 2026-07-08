@@ -1,171 +1,217 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
-import { supabase } from '../supabaseClient'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { supabase } from '../../supabaseClient'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
-function TradespeopleContent() {
-  const [tradespeople, setTradespeople] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('All')
+export default function TradespersonDashboard() {
+  const [user, setUser] = useState(null)
+  const [profile, setProfile] = useState(null)
+  const [bookings, setBookings] = useState([])
+  const [isAvailable, setIsAvailable] = useState(true)
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   useEffect(() => {
-    const service = searchParams.get('service')
-    if (service) setFilter(service)
-  }, [searchParams])
+    async function getData() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        router.push('/login')
+        return
+      }
+      setUser(user)
 
-  useEffect(() => {
-    async function fetchTradespeople() {
-      setLoading(true)
-      let query = supabase
+      const { data: profileData } = await supabase
         .from('profiles')
         .select('*')
-        .eq('role', 'tradesperson')
+        .eq('id', user.id)
+        .single()
+      setProfile(profileData)
+      setIsAvailable(profileData?.is_available ?? true)
 
-      if (filter !== 'All') {
-        query = query.eq('trade', filter)
-      }
-
-      const { data, error } = await query
-      if (!error) setTradespeople(data)
-      setLoading(false)
+      const { data: bookingsData } = await supabase
+        .from('bookings')
+        .select('*')
+        .eq('tradesperson_id', user.id)
+      setBookings(bookingsData || [])
     }
-    fetchTradespeople()
-  }, [filter])
+    getData()
+  }, [])
+
+  async function handleLogout() {
+    await supabase.auth.signOut()
+    router.push('/')
+  }
+
+  async function toggleAvailability() {
+    const newStatus = !isAvailable
+    setIsAvailable(newStatus)
+    await supabase
+      .from('profiles')
+      .update({ is_available: newStatus })
+      .eq('id', user.id)
+  }
+
+  async function updateBookingStatus(id, status) {
+    await supabase.from('bookings').update({ status }).eq('id', id)
+    setBookings(bookings.map(b => b.id === id ? { ...b, status } : b))
+  }
+
+  if (!user) return <p style={{ padding: '40px' }}>Loading...</p>
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '20px' }}>
-      <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', paddingBottom: '16px', borderBottom: '1px solid #e5e7eb' }}>
-        <h1 style={{ color: '#1F6F8B', fontSize: '1.6rem', fontWeight: '800' }}>Hail Depot</h1>
-        <Link href="/dashboard/customer" style={{ color: '#1F6F8B', textDecoration: 'none', fontWeight: '600' }}>← Back to Dashboard</Link>
+    <div style={{ minHeight: '100vh', background: '#f9fafb' }}>
+
+      {/* Navbar */}
+      <nav style={{
+        background: 'white',
+        borderBottom: '1px solid #e5e7eb',
+        padding: '0 32px',
+        height: '64px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        boxShadow: '0 1px 8px rgba(0,0,0,0.06)'
+      }}>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <span style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1F6F8B', letterSpacing: '-0.04em' }}>
+            Hail Depot
+          </span>
+        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <span style={{ color: '#6B7280', fontSize: '0.9rem' }}>{profile?.full_name}</span>
+          <button onClick={handleLogout} style={{
+            padding: '8px 16px',
+            background: 'transparent',
+            border: '1.5px solid #e5e7eb',
+            borderRadius: '24px',
+            cursor: 'pointer',
+            fontWeight: '600',
+            fontSize: '0.85rem',
+            color: '#0B1F2A'
+          }}>
+            Log out
+          </button>
+        </div>
       </nav>
 
-      <h2 style={{ marginBottom: '20px' }}>Find a Tradesperson</h2>
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 20px' }}>
 
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '24px', flexWrap: 'wrap' }}>
-        {['All', 'Plumber', 'Electrician', 'Painter'].map(type => (
-          <button
-            key={type}
-            onClick={() => setFilter(type)}
-            style={{
-              padding: '8px 20px',
-              border: `2px solid ${filter === type ? '#1F6F8B' : '#e5e7eb'}`,
-              borderRadius: '8px',
-              background: filter === type ? '#1F6F8B' : 'white',
-              color: filter === type ? 'white' : '#374151',
-              fontWeight: '600',
-              cursor: 'pointer'
-            }}
-          >
-            {type}
-          </button>
-        ))}
-      </div>
-
-      {loading ? (
-        <p style={{ color: '#6B7280' }}>Loading...</p>
-      ) : tradespeople.length === 0 ? (
-        <p style={{ color: '#6B7280' }}>No tradespeople found in this category yet.</p>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
-          {tradespeople.map(person => (
-  <div key={person.id} style={{
-    background: '#0B1F2A',
-    borderRadius: '20px',
-    overflow: 'hidden',
-    boxShadow: '0 4px 24px rgba(0,0,0,0.2)',
-    transition: 'transform 0.2s',
-  }}
-    onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-6px)'}
-    onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-  >
-    {/* Photo */}
-    <div style={{
-      width: '100%', height: '220px',
-      background: person.avatar_url ? `url(${person.avatar_url})` : 'linear-gradient(135deg, #1F6F8B, #0B1F2A)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      display: 'flex', alignItems: 'flex-end',
-      padding: '16px',
-      position: 'relative'
-    }}>
-      {!person.avatar_url && (
+        {/* Profile Card */}
         <div style={{
-          position: 'absolute', top: '50%', left: '50%',
-          transform: 'translate(-50%, -50%)',
-          fontSize: '5rem', fontWeight: '900', color: 'rgba(255,255,255,0.15)'
+          background: 'white',
+          borderRadius: '20px',
+          padding: '24px',
+          marginBottom: '32px',
+          border: '1px solid #e5e7eb',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+          gap: '16px'
         }}>
-          {person.full_name?.charAt(0)}
+          <div>
+            <h2 style={{ margin: '0 0 4px', color: '#0B1F2A', fontSize: '1.3rem', fontWeight: '800' }}>
+              {profile?.full_name}
+            </h2>
+            <p style={{ margin: '0 0 4px', color: '#1F6F8B', fontWeight: '600' }}>{profile?.trade}</p>
+            <p style={{ margin: '0 0 12px', color: '#6B7280', fontSize: '0.9rem' }}>📍 {profile?.location}</p>
+
+            {/* Availability Toggle */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ color: '#6B7280', fontSize: '0.9rem' }}>Status:</span>
+              <button
+                onClick={toggleAvailability}
+                style={{
+                  padding: '6px 16px',
+                  borderRadius: '20px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: '700',
+                  fontSize: '0.85rem',
+                  background: isAvailable ? '#dcfce7' : '#fee2e2',
+                  color: isAvailable ? '#16a34a' : '#dc2626',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {isAvailable ? '🟢 Available' : '🔴 Unavailable'}
+              </button>
+            </div>
+          </div>
+
+          <Link href={`/tradesperson/${user?.id}`} style={{
+            padding: '10px 20px',
+            background: '#1F6F8B',
+            color: 'white',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            fontWeight: '600',
+            fontSize: '0.9rem'
+          }}>
+            View My Profile
+          </Link>
         </div>
-      )}
-      <span style={{
-        background: '#1F6F8B',
-        color: 'white',
-        padding: '4px 12px',
-        borderRadius: '20px',
-        fontSize: '0.8rem',
-        fontWeight: '700',
-        textTransform: 'uppercase',
-        letterSpacing: '0.05em'
-      }}>
-        {person.trade}
-      </span>
-    </div>
 
-    {/* Info */}
-    <div style={{ padding: '20px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-        <Link href={`/tradesperson/${person.id}`} style={{ textDecoration: 'none' }}>
-          <h3 style={{ margin: '0', color: 'white', fontSize: '1.15rem', fontWeight: '800', letterSpacing: '-0.02em' }}>
-            {person.full_name}
-          </h3>
-        </Link>
-        <span style={{ color: '#EAF4F7', fontSize: '0.85rem', fontWeight: '600' }}>⭐ New</span>
-      </div>
-
-      <p style={{ margin: '0 0 4px', color: '#6B7280', fontSize: '0.85rem' }}>
-        📍 {person.location}
-      </p>
-
-      <p style={{ margin: '0 0 16px', color: '#9ca3af', fontSize: '0.85rem', lineHeight: '1.5' }}>
-        {person.bio ? person.bio.substring(0, 70) + '...' : 'Available for bookings in your area'}
-      </p>
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        {/* Incoming Bookings */}
         <div>
-          <p style={{ margin: '0', color: 'white', fontWeight: '800', fontSize: '1rem' }}>
-            {person.rate || 'Rate on request'}
-          </p>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#0B1F2A', marginBottom: '16px' }}>
+            Incoming Bookings
+          </h2>
+          {bookings.length === 0 ? (
+            <div style={{
+              background: 'white', borderRadius: '16px', padding: '40px',
+              textAlign: 'center', border: '1px solid #e5e7eb'
+            }}>
+              <p style={{ color: '#6B7280' }}>No bookings yet. Your profile is live — customers can find and book you!</p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {bookings.map((booking, index) => (
+                <div key={index} style={{
+                  background: 'white', borderRadius: '16px', padding: '20px',
+                  border: '1px solid #e5e7eb',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+                }}>
+                  <p style={{ margin: '0 0 6px', fontWeight: '700', color: '#0B1F2A' }}>{booking.service}</p>
+                  <p style={{ margin: '0 0 4px', color: '#6B7280', fontSize: '0.85rem' }}>📍 {booking.location} · 📅 {booking.date}</p>
+                  <p style={{ margin: '0 0 16px', color: '#6B7280', fontSize: '0.85rem' }}>{booking.description}</p>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+                    {booking.status === 'pending' && (
+                      <>
+                        <button onClick={() => updateBookingStatus(booking.id, 'accepted')}
+                          style={{ padding: '8px 20px', background: '#1F6F8B', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600' }}>
+                          Accept
+                        </button>
+                        <button onClick={() => updateBookingStatus(booking.id, 'declined')}
+                          style={{ padding: '8px 20px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600' }}>
+                          Decline
+                        </button>
+                      </>
+                    )}
+                    {booking.status === 'accepted' && (
+                      <button onClick={() => updateBookingStatus(booking.id, 'completed')}
+                        style={{ padding: '8px 20px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600' }}>
+                        Mark Complete
+                      </button>
+                    )}
+                    <span style={{
+                      padding: '6px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '700',
+                      background: booking.status === 'completed' ? '#dcfce7' : booking.status === 'accepted' ? '#dbeafe' : booking.status === 'declined' ? '#fee2e2' : '#fef3c7',
+                      color: booking.status === 'completed' ? '#16a34a' : booking.status === 'accepted' ? '#1d4ed8' : booking.status === 'declined' ? '#dc2626' : '#d97706'
+                    }}>
+                      {booking.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-        <Link href={`/book/${person.id}`} style={{
-          padding: '10px 24px',
-          background: '#1F6F8B',
-          color: 'white',
-          borderRadius: '10px',
-          textDecoration: 'none',
-          fontWeight: '700',
-          fontSize: '0.9rem',
-          letterSpacing: '0.02em'
-        }}>
-          Book Now
-        </Link>
       </div>
     </div>
-  </div>
-))}
-        </div>
-      )}
-    </div>
-  )
-}
-
-export default function TradespeopleListPage() {
-  return (
-    <Suspense fallback={<p style={{ padding: '40px' }}>Loading...</p>}>
-      <TradespeopleContent />
-    </Suspense>
   )
 }
