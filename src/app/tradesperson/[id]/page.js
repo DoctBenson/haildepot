@@ -275,14 +275,37 @@ export default function TradespersonProfile({ params }) {
               )}
             </div>
           ) : (
-            <Link href={`/book/${id}`} style={{
-              display: 'block', textAlign: 'center', padding: '14px',
-              background: '#1F6F8B', color: 'white', borderRadius: '12px',
-              textDecoration: 'none', fontWeight: '700', fontSize: '1rem'
-            }}>
-              Book Now
-            </Link>
-          )}
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <Link href={`/book/${id}`} style={{
+      display: 'block', textAlign: 'center', padding: '14px',
+      background: '#1F6F8B', color: 'white', borderRadius: '12px',
+      textDecoration: 'none', fontWeight: '700', fontSize: '1rem'
+    }}>
+      Book Now
+    </Link>
+
+        {tradesperson.phone && (
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <a href={`tel:${tradesperson.phone}`} style={{
+          flex: 1, display: 'block', textAlign: 'center', padding: '12px',
+          background: '#0B1F2A', color: 'white', borderRadius: '12px',
+          textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem'
+        }}>
+          📞 Call
+        </a>
+        <a href={`https://wa.me/${tradesperson.phone.replace(/\D/g, '')}`}
+          target="_blank" rel="noopener noreferrer"
+          style={{
+            flex: 1, display: 'block', textAlign: 'center', padding: '12px',
+            background: '#25D366', color: 'white', borderRadius: '12px',
+            textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem'
+          }}>
+          💬 WhatsApp
+        </a>
+      </div>
+    )}
+  </div>
+  )}
         </div>
 
         {/* Reviews */}
