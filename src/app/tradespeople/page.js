@@ -119,10 +119,21 @@ function TradespeopleContent() {
         </div>
 
         {loading ? (
-          <p style={{ color: '#6B7280' }}>Loading...</p>
-        ) : filtered.length === 0 ? (
-          <p style={{ color: '#6B7280' }}>No tradespeople found.</p>
-        ) : (
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+    {[1,2,3,4,5,6].map(i => (
+      <div key={i} style={{ background: '#0B1F2A', borderRadius: '20px', overflow: 'hidden', opacity: 0.6 }}>
+        <div style={{ width: '100%', height: '220px', background: 'linear-gradient(90deg, #1a2f3d 25%, #1F6F8B 50%, #1a2f3d 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite' }} />
+        <div style={{ padding: '20px' }}>
+          <div style={{ height: '20px', background: '#1a2f3d', borderRadius: '8px', marginBottom: '12px', width: '70%' }} />
+          <div style={{ height: '14px', background: '#1a2f3d', borderRadius: '8px', marginBottom: '8px', width: '50%' }} />
+          <div style={{ height: '14px', background: '#1a2f3d', borderRadius: '8px', width: '90%' }} />
+        </div>
+      </div>
+    ))}
+  </div>
+) : filtered.length === 0 ? (
+           <p style={{ color: '#6B7280' }}>No tradespeople found.</p>
+) :       (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
             {filtered.map(person => (
               <div key={person.id} style={{
