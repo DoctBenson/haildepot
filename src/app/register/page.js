@@ -16,6 +16,7 @@ export default function RegisterPage() {
   const [trade, setTrade] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
 
   async function handleRegister() {
@@ -62,54 +63,41 @@ export default function RegisterPage() {
         <div>
           <p style={{ marginBottom: '20px', color: '#6B7280', fontSize: '0.95rem' }}>I am looking to:</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
-            <button
-              onClick={() => setRole('customer')}
-              style={{
-                padding: '24px 20px',
-                border: `2px solid ${role === 'customer' ? '#1F6F8B' : '#e5e7eb'}`,
-                borderRadius: '16px',
-                background: role === 'customer' ? '#EAF4F7' : 'white',
-                cursor: 'pointer',
-                textAlign: 'left',
-                transition: 'all 0.2s',
-                boxShadow: role === 'customer' ? '0 4px 12px rgba(31,111,139,0.15)' : '0 1px 4px rgba(0,0,0,0.06)'
-              }}
-            >
+            <button onClick={() => setRole('customer')} style={{
+              padding: '24px 20px',
+              border: `2px solid ${role === 'customer' ? '#1F6F8B' : '#e5e7eb'}`,
+              borderRadius: '16px',
+              background: role === 'customer' ? '#EAF4F7' : 'white',
+              cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s',
+              boxShadow: role === 'customer' ? '0 4px 12px rgba(31,111,139,0.15)' : '0 1px 4px rgba(0,0,0,0.06)'
+            }}>
               <div style={{ fontWeight: '700', fontSize: '1.1rem', color: '#0B1F2A', marginBottom: '6px' }}>Find a tradesperson</div>
               <div style={{ color: '#6B7280', fontSize: '0.9rem', lineHeight: '1.5' }}>Book verified plumbers, electricians and painters in Accra & Kasoa</div>
               {role === 'customer' && <div style={{ marginTop: '10px', color: '#1F6F8B', fontWeight: '600', fontSize: '0.85rem' }}>✓ Selected</div>}
             </button>
 
-            <button
-              onClick={() => setRole('tradesperson')}
-              style={{
-                padding: '24px 20px',
-                border: `2px solid ${role === 'tradesperson' ? '#1F6F8B' : '#e5e7eb'}`,
-                borderRadius: '16px',
-                background: role === 'tradesperson' ? '#EAF4F7' : 'white',
-                cursor: 'pointer',
-                textAlign: 'left',
-                transition: 'all 0.2s',
-                boxShadow: role === 'tradesperson' ? '0 4px 12px rgba(31,111,139,0.15)' : '0 1px 4px rgba(0,0,0,0.06)'
-              }}
-            >
+            <button onClick={() => setRole('tradesperson')} style={{
+              padding: '24px 20px',
+              border: `2px solid ${role === 'tradesperson' ? '#1F6F8B' : '#e5e7eb'}`,
+              borderRadius: '16px',
+              background: role === 'tradesperson' ? '#EAF4F7' : 'white',
+              cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s',
+              boxShadow: role === 'tradesperson' ? '0 4px 12px rgba(31,111,139,0.15)' : '0 1px 4px rgba(0,0,0,0.06)'
+            }}>
               <div style={{ fontWeight: '700', fontSize: '1.1rem', color: '#0B1F2A', marginBottom: '6px' }}>Offer trade services</div>
               <div style={{ color: '#6B7280', fontSize: '0.9rem', lineHeight: '1.5' }}>Join as a plumber, electrician or painter and grow your client base</div>
               {role === 'tradesperson' && <div style={{ marginTop: '10px', color: '#1F6F8B', fontWeight: '600', fontSize: '0.85rem' }}>✓ Selected</div>}
             </button>
           </div>
 
-          <button
-            onClick={() => role && setStep(2)}
-            style={{
-              width: '100%', padding: '14px',
-              background: role ? '#1F6F8B' : '#e5e7eb',
-              color: role ? 'white' : '#9ca3af',
-              border: 'none', borderRadius: '12px', fontWeight: '700',
-              cursor: role ? 'pointer' : 'not-allowed',
-              fontSize: '1rem', transition: 'all 0.2s'
-            }}
-          >
+          <button onClick={() => role && setStep(2)} style={{
+            width: '100%', padding: '14px',
+            background: role ? '#1F6F8B' : '#e5e7eb',
+            color: role ? 'white' : '#9ca3af',
+            border: 'none', borderRadius: '12px', fontWeight: '700',
+            cursor: role ? 'pointer' : 'not-allowed',
+            fontSize: '1rem', transition: 'all 0.2s'
+          }}>
             Continue →
           </button>
         </div>
@@ -119,18 +107,37 @@ export default function RegisterPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <input placeholder="Full Name" value={fullName} onChange={e => setFullName(e.target.value)}
             style={{ padding: '14px', border: '1.5px solid #e5e7eb', borderRadius: '12px', fontSize: '1rem' }} />
+
           <input placeholder="Email" type="email" value={email} onChange={e => setEmail(e.target.value)}
             style={{ padding: '14px', border: '1.5px solid #e5e7eb', borderRadius: '12px', fontSize: '1rem' }} />
-          <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)}
-            style={{ padding: '14px', border: '1.5px solid #e5e7eb', borderRadius: '12px', fontSize: '1rem' }} />
+
+          <div style={{ position: 'relative' }}>
+            <input
+              placeholder="Password"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              style={{ width: '100%', padding: '14px', paddingRight: '48px', border: '1.5px solid #e5e7eb', borderRadius: '12px', fontSize: '1rem', boxSizing: 'border-box' }}
+            />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} style={{
+              position: 'absolute', right: '12px', top: '50%',
+              transform: 'translateY(-50%)', background: 'none',
+              border: 'none', cursor: 'pointer', color: '#6B7280', fontSize: '1.1rem'
+            }}>
+              {showPassword ? '🙈' : '👁️'}
+            </button>
+          </div>
+
           <input placeholder="Phone number" value={phone} onChange={e => setPhone(e.target.value)}
             style={{ padding: '14px', border: '1.5px solid #e5e7eb', borderRadius: '12px', fontSize: '1rem' }} />
+
           <select value={location} onChange={e => setLocation(e.target.value)}
             style={{ padding: '14px', border: '1.5px solid #e5e7eb', borderRadius: '12px', fontSize: '1rem', background: 'white' }}>
             <option value="">Select your area</option>
             <option value="Accra">Accra</option>
             <option value="Kasoa">Kasoa</option>
           </select>
+
           {role === 'tradesperson' && (
             <select value={trade} onChange={e => setTrade(e.target.value)}
               style={{ padding: '14px', border: '1.5px solid #e5e7eb', borderRadius: '12px', fontSize: '1rem', background: 'white' }}>
@@ -140,19 +147,20 @@ export default function RegisterPage() {
               <option value="Painter">Painter</option>
             </select>
           )}
-          <button
-            onClick={handleRegister}
-            disabled={loading}
-            style={{
-              padding: '14px', background: '#1F6F8B', color: 'white',
-              border: 'none', borderRadius: '12px', fontWeight: '700',
-              cursor: 'pointer', fontSize: '1rem', marginTop: '8px'
-            }}
-          >
+
+          <button onClick={handleRegister} disabled={loading} style={{
+            padding: '14px', background: '#1F6F8B', color: 'white',
+            border: 'none', borderRadius: '12px', fontWeight: '700',
+            cursor: 'pointer', fontSize: '1rem', marginTop: '8px'
+          }}>
             {loading ? 'Creating account...' : 'Create Account'}
           </button>
-          <button onClick={() => setStep(1)}
-            style={{ padding: '12px', background: 'transparent', border: '1.5px solid #e5e7eb', borderRadius: '12px', cursor: 'pointer', color: '#6B7280' }}>
+
+          <button onClick={() => setStep(1)} style={{
+            padding: '12px', background: 'transparent',
+            border: '1.5px solid #e5e7eb', borderRadius: '12px',
+            cursor: 'pointer', color: '#6B7280'
+          }}>
             ← Back
           </button>
         </div>
