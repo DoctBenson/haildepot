@@ -1,10 +1,10 @@
 'use client'
-
+import StatsCard from '../../../components/dashboard/StatsCard'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../supabaseClient'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-
+import DashboardPage from '../../../components/dashboard/DashboardPage'
 export default function CustomerDashboard() {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
@@ -48,45 +48,11 @@ export default function CustomerDashboard() {
   )
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f9fafb' }}>
-      
-      {/* Navbar */}
-      <nav style={{
-        background: 'white',
-        borderBottom: '1px solid #e5e7eb',
-        padding: '0 32px',
-        height: '64px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-        boxShadow: '0 1px 8px rgba(0,0,0,0.06)'
-      }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
-          <span style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1F6F8B', letterSpacing: '-0.04em' }}>
-            Hail Depot
-          </span>
-        </Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span style={{ color: '#6B7280', fontSize: '0.9rem' }}>
-            {profile?.full_name}
-          </span>
-          <button onClick={handleLogout} style={{
-            padding: '8px 16px',
-            background: 'transparent',
-            border: '1.5px solid #e5e7eb',
-            borderRadius: '24px',
-            cursor: 'pointer',
-            fontWeight: '600',
-            fontSize: '0.85rem',
-            color: '#0B1F2A'
-          }}>
-            Log out
-          </button>
-        </div>
-      </nav>
+  <DashboardPage
+    title="Customer Dashboard"
+    userName={profile?.full_name}
+    onLogout={handleLogout}
+  >
 
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 20px' }}>
 
@@ -97,6 +63,44 @@ export default function CustomerDashboard() {
           </h1>
           <p style={{ color: '#6B7280', fontSize: '0.95rem' }}>Find and book trusted tradespeople in Accra & Kasoa</p>
         </div>
+
+        {/* Dashboard Statistics */}
+<div
+  style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+    gap: '20px',
+    marginBottom: '40px',
+  }}
+>
+  <StatsCard
+    title="Active Bookings"
+    value={bookings.filter(b => b.status !== 'completed').length}
+    icon="📅"
+    color="#1F6F8B"
+  />
+
+  <StatsCard
+    title="Completed Jobs"
+    value={bookings.filter(b => b.status === 'completed').length}
+    icon="✅"
+    color="#10B981"
+  />
+
+  <StatsCard
+    title="Pending Requests"
+    value={bookings.filter(b => b.status === 'pending').length}
+    icon="⏳"
+    color="#F59E0B"
+  />
+
+  <StatsCard
+    title="Reviews Given"
+    value="0"
+    icon="⭐"
+    color="#8B5CF6"
+  />
+</div>
 
         {/* Service Cards */}
         <div style={{ marginBottom: '40px' }}>
@@ -150,8 +154,8 @@ export default function CustomerDashboard() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {bookings.map((booking, index) => (
-                <div key={index} style={{
+              {bookings.map((booking) => (
+                <div key={booking.id} style={{
                   background: 'white', borderRadius: '16px', padding: '20px',
                   border: '1px solid #e5e7eb',
                   display: 'flex', justifyContent: 'space-between',
@@ -188,7 +192,7 @@ export default function CustomerDashboard() {
             </div>
           )}
         </div>
-      </div>
-    </div>
-  )
+            </div>
+  </DashboardPage>
+)
 }
