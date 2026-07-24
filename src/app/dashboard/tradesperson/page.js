@@ -1,5 +1,5 @@
 'use client'
-
+import RecentActivity from '../../../components/dashboard/RecentActivity'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../supabaseClient'
 import { useRouter } from 'next/navigation'
@@ -11,6 +11,22 @@ export default function TradespersonDashboard() {
   const [bookings, setBookings] = useState([])
   const [isAvailable, setIsAvailable] = useState(true)
   const router = useRouter()
+  const recentActivities = [
+  {
+    title: 'New booking request received',
+    time: 'Today',
+  },
+  {
+    title: 'Job marked as completed',
+    time: 'Yesterday',
+  },
+  {
+    title: isAvailable
+      ? 'Availability set to Available'
+      : 'Availability set to Unavailable',
+    time: 'Recently',
+  },
+]
 
   useEffect(() => {
     async function getData() {
