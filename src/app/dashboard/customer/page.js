@@ -1,15 +1,32 @@
 'use client'
 import StatsCard from '../../../components/dashboard/StatsCard'
+import RecentActivity from '../../../components/dashboard/RecentActivity'
+import DashboardPage from '../../../components/dashboard/DashboardPage'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../supabaseClient'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import DashboardPage from '../../../components/dashboard/DashboardPage'
+
 export default function CustomerDashboard() {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [bookings, setBookings] = useState([])
   const router = useRouter()
+
+  const recentActivities = [
+  {
+    title: 'Booking submitted',
+    time: 'Today',
+  },
+  {
+    title: 'Tradesperson accepted your request',
+    time: 'Yesterday',
+  },
+  {
+    title: 'Job completed',
+    time: '3 days ago',
+  },
+]
 
   useEffect(() => {
     async function getData() {
@@ -193,6 +210,10 @@ export default function CustomerDashboard() {
           )}
         </div>
             </div>
+
+            <div style={{ marginTop: '40px' }}>
+  <RecentActivity activities={recentActivities} />
+</div>
   </DashboardPage>
 )
 }
