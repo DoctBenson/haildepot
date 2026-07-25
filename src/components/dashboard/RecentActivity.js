@@ -1,4 +1,17 @@
+import {
+  Calendar,
+  CheckCircle,
+  Wrench,
+} from 'lucide-react'
+
 export default function RecentActivity({ activities = [] }) {
+
+  const icons = {
+  booking: <Calendar size={18} color="#1F6F8B" />,
+  completed: <CheckCircle size={18} color="#10B981" />,
+  profile: <Wrench size={18} color="#F59E0B" />,
+}
+
   return (
     <div
       style={{
@@ -46,15 +59,25 @@ export default function RecentActivity({ activities = [] }) {
                 gap: "12px",
               }}
             >
-              <div
-                style={{
-                  width: "10px",
-                  height: "10px",
-                  borderRadius: "50%",
-                  background: "#1F6F8B",
-                  flexShrink: 0,
-                }}
-              />
+
+
+            <div
+               style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "36px",
+                height: "36px",
+                borderRadius: "10px",
+                background: "#F8FAFC",
+                flexShrink: 0,
+              }}
+              >
+             {icons[activity.type]}
+            </div>
+
+
+            
 
               <div>
                 <p

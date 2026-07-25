@@ -1,4 +1,6 @@
 'use client'
+import StatsCard from '../../../components/dashboard/StatsCard'
+import DashboardPage from '../../../components/dashboard/DashboardPage'
 import RecentActivity from '../../../components/dashboard/RecentActivity'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../supabaseClient'
@@ -71,28 +73,12 @@ export default function TradespersonDashboard() {
   if (!user) return <p style={{ padding: '40px' }}>Loading...</p>
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f9fafb' }}>
-      <nav style={{
-        background: 'white', borderBottom: '1px solid #e5e7eb',
-        padding: '0 32px', height: '64px', display: 'flex',
-        alignItems: 'center', justifyContent: 'space-between',
-        position: 'sticky', top: 0, zIndex: 100,
-        boxShadow: '0 1px 8px rgba(0,0,0,0.06)'
-      }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
-          <span style={{ fontSize: '1.4rem', fontWeight: '900', color: '#1F6F8B', letterSpacing: '-0.04em' }}>
-            Hail Depot
-          </span>
-        </Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span style={{ color: '#6B7280', fontSize: '0.9rem' }}>{profile?.full_name}</span>
-          <button onClick={handleLogout} style={{
-            padding: '8px 16px', background: 'transparent',
-            border: '1.5px solid #e5e7eb', borderRadius: '24px',
-            cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem', color: '#0B1F2A'
-          }}>Log out</button>
-        </div>
-      </nav>
+  <DashboardPage
+    title="Tradesperson Dashboard"
+    userName={profile?.full_name}
+    onLogout={handleLogout}
+  >
+      
 
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 20px' }}>
         <div style={{
@@ -127,9 +113,46 @@ export default function TradespersonDashboard() {
           }}>
             View My Profile
           </Link>
-        </div>
+</div>
 
-        <div>
+<div
+  style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+    gap: '20px',
+    marginBottom: '40px',
+  }}
+>
+  <StatsCard
+    title="Pending Jobs"
+    value={bookings.filter(b => b.status === 'pending').length}
+    icon="📥"
+    color="#F59E0B"
+  />
+
+  <StatsCard
+    title="Accepted Jobs"
+    value={bookings.filter(b => b.status === 'accepted').length}
+    icon="🛠️"
+    color="#1F6F8B"
+  />
+
+  <StatsCard
+    title="Completed Jobs"
+    value={bookings.filter(b => b.status === 'completed').length}
+    icon="✅"
+    color="#10B981"
+  />
+
+  <StatsCard
+    title="Availability"
+    value={isAvailable ? 'Online' : 'Offline'}
+    icon="🟢"
+    color={isAvailable ? '#10B981' : '#EF4444'}
+  />
+</div>
+
+<div>
           <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#0B1F2A', marginBottom: '16px' }}>
             Incoming Bookings
           </h2>
@@ -183,6 +206,6 @@ export default function TradespersonDashboard() {
           )}
         </div>
       </div>
-    </div>
+    </DashboardPage>
   )
 }
