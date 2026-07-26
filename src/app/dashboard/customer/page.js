@@ -10,6 +10,10 @@ import {
   Wrench,
   Zap,
   Paintbrush,
+  Calendar,
+  CheckCircle,
+  Clock3,
+  Star,
 } from 'lucide-react'
 
 export default function CustomerDashboard() {
@@ -101,28 +105,28 @@ export default function CustomerDashboard() {
   <StatsCard
     title="Active Bookings"
     value={bookings.filter(b => b.status !== 'completed').length}
-    icon="📅"
+    icon={<Calendar size={24} color="white" />}
     color="#1F6F8B"
   />
 
   <StatsCard
     title="Completed Jobs"
     value={bookings.filter(b => b.status === 'completed').length}
-    icon="✅"
+    icon={<CheckCircle size={24} color="white" />}
     color="#10B981"
   />
 
   <StatsCard
     title="Pending Requests"
     value={bookings.filter(b => b.status === 'pending').length}
-    icon="⏳"
+    icon={<Clock3 size={24} color="white" />}
     color="#F59E0B"
   />
 
   <StatsCard
     title="Reviews Given"
-    value="0"
-    icon="⭐"
+    value={0}
+    icon={<Star size={24} color="white" />}
     color="#8B5CF6"
   />
 </div>
