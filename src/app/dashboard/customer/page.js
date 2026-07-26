@@ -6,6 +6,11 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../supabaseClient'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import {
+  Wrench,
+  Zap,
+  Paintbrush,
+} from 'lucide-react'
 
 export default function CustomerDashboard() {
   const [user, setUser] = useState(null)
@@ -15,14 +20,17 @@ export default function CustomerDashboard() {
 
   const recentActivities = [
   {
+    type: 'booking',
     title: 'Booking submitted',
     time: 'Today',
   },
   {
+    type: 'booking',
     title: 'Tradesperson accepted your request',
     time: 'Yesterday',
   },
   {
+    type: 'completed',
     title: 'Job completed',
     time: '3 days ago',
   },
@@ -126,9 +134,28 @@ export default function CustomerDashboard() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '16px' }}>
             {[
-              { label: 'Plumber', service: 'Plumber', bg: '#EAF4F7', icon: '🔧' },
-              { label: 'Electrician', service: 'Electrician', bg: '#fef3c7', icon: '⚡' },
-              { label: 'Painter', service: 'Painter', bg: '#fce7f3', icon: '🎨' },
+             
+             
+             
+             
+        {
+          label: 'Plumber',
+          service: 'Plumber',
+          bg: '#EAF4F7',
+          icon: <Wrench size={28} />,
+        },
+        {
+          label: 'Electrician',
+          service: 'Electrician',
+          bg: '#FEF3C7',
+          icon: <Zap size={28} />,
+        },
+        {
+          label: 'Painter',
+          service: 'Painter',
+          bg: '#FCE7F3',
+          icon: <Paintbrush size={28} />,
+          },
             ].map(item => (
               <Link key={item.service} href={`/tradespeople?service=${item.service}`} style={{ textDecoration: 'none' }}>
                 <div style={{
@@ -143,7 +170,17 @@ export default function CustomerDashboard() {
                   onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
                   onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
                 >
-                  <div style={{ fontSize: '2rem', marginBottom: '8px' }}>{item.icon}</div>
+                  
+              <div
+                style={{
+                marginBottom: '12px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              >
+                {item.icon}
+                </div>
                   <p style={{ margin: '0', fontWeight: '700', color: '#0B1F2A', fontSize: '0.95rem' }}>{item.label}</p>
                 </div>
               </Link>
@@ -209,10 +246,13 @@ export default function CustomerDashboard() {
             </div>
           )}
         </div>
-            </div>
 
-            <div style={{ marginTop: '40px' }}>
-  <RecentActivity activities={recentActivities} />
+        <div style={{ marginTop: '40px' }}>
+             <RecentActivity activities={recentActivities} />
+        </div>
+
+          
+  
 </div>
   </DashboardPage>
 )
