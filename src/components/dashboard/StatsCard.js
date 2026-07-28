@@ -5,9 +5,12 @@ export default function StatsCard({
   value,
   icon,
   color = '#1F6F8B',
+  onClick,
+
 }) {
   return (
     <div
+      onClick={onClick}
       style={{
         background: '#FFFFFF',
         border: '1px solid #E5E7EB',

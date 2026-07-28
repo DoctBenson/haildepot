@@ -14,6 +14,8 @@ import {
   CheckCircle,
   Clock3,
   Star,
+  MapPin,
+  CalendarDays,
 } from 'lucide-react'
 
 export default function CustomerDashboard() {
@@ -21,24 +23,25 @@ export default function CustomerDashboard() {
   const [profile, setProfile] = useState(null)
   const [bookings, setBookings] = useState([])
   const router = useRouter()
+  const [filter, setFilter] = useState('all')
 
   const recentActivities = [
-  {
-    type: 'booking',
-    title: 'Booking submitted',
-    time: 'Today',
-  },
-  {
-    type: 'booking',
-    title: 'Tradesperson accepted your request',
-    time: 'Yesterday',
-  },
-  {
-    type: 'completed',
-    title: 'Job completed',
-    time: '3 days ago',
-  },
-]
+    {
+      type: 'booking',
+      title: 'Booking submitted',
+      time: 'Today',
+    },
+    {
+      type: 'booking',
+      title: 'Tradesperson accepted your request',
+      time: 'Yesterday',
+    },
+    {
+      type: 'completed',
+      title: 'Job completed',
+      time: '3 days ago',
+    },
+  ]
 
   useEffect(() => {
     async function getData() {
@@ -70,6 +73,22 @@ export default function CustomerDashboard() {
     router.push('/')
   }
 
+  const filteredBookings = bookings.filter((booking) => {
+    if (filter === 'active') {
+      return booking.status !== 'completed'
+    }
+
+    if (filter === 'completed') {
+      return booking.status === 'completed'
+    }
+
+    if (filter === 'pending') {
+      return booking.status === 'pending'
+    }
+
+    return true
+  })
+
   if (!user) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
       <p style={{ color: '#6B7280' }}>Loading...</p>
@@ -77,11 +96,11 @@ export default function CustomerDashboard() {
   )
 
   return (
-  <DashboardPage
-    title="Customer Dashboard"
-    userName={profile?.full_name}
-    onLogout={handleLogout}
-  >
+    <DashboardPage
+      title="Customer Dashboard"
+      userName={profile?.full_name}
+      onLogout={handleLogout}
+    >
 
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 20px' }}>
 
@@ -94,42 +113,46 @@ export default function CustomerDashboard() {
         </div>
 
         {/* Dashboard Statistics */}
-<div
-  style={{
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-    gap: '20px',
-    marginBottom: '40px',
-  }}
->
-  <StatsCard
-    title="Active Bookings"
-    value={bookings.filter(b => b.status !== 'completed').length}
-    icon={<Calendar size={24} color="white" />}
-    color="#1F6F8B"
-  />
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '20px',
+            marginBottom: '40px',
+          }}
+        >
+          <StatsCard
+            title="Active Bookings"
+            value={bookings.filter(b => b.status !== 'completed').length}
+            icon={<Calendar size={24} color="white" />}
+            color="#1F6F8B"
+            onClick={() => setFilter('active')}
+          />
 
-  <StatsCard
-    title="Completed Jobs"
-    value={bookings.filter(b => b.status === 'completed').length}
-    icon={<CheckCircle size={24} color="white" />}
-    color="#10B981"
-  />
+          <StatsCard
+            title="Completed Jobs"
+            value={bookings.filter(b => b.status === 'completed').length}
+            icon={<CheckCircle size={24} color="white" />}
+            color="#10B981"
+            onClick={() => setFilter('completed')}
+          />
 
-  <StatsCard
-    title="Pending Requests"
-    value={bookings.filter(b => b.status === 'pending').length}
-    icon={<Clock3 size={24} color="white" />}
-    color="#F59E0B"
-  />
+          <StatsCard
+            title="Pending Requests"
+            value={bookings.filter(b => b.status === 'pending').length}
+            icon={<Clock3 size={24} color="white" />}
+            color="#F59E0B"
+            onClick={() => setFilter('pending')}
+          />
 
-  <StatsCard
-    title="Reviews Given"
-    value={0}
-    icon={<Star size={24} color="white" />}
-    color="#8B5CF6"
-  />
-</div>
+          <StatsCard
+            title="Reviews Given"
+            value={0}
+            icon={<Star size={24} color="white" />}
+            color="#8B5CF6"
+            onClick={() => setFilter('all')}
+          />
+        </div>
 
         {/* Service Cards */}
         <div style={{ marginBottom: '40px' }}>
@@ -138,28 +161,28 @@ export default function CustomerDashboard() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '16px' }}>
             {[
-             
-             
-             
-             
-        {
-          label: 'Plumber',
-          service: 'Plumber',
-          bg: '#EAF4F7',
-          icon: <Wrench size={28} />,
-        },
-        {
-          label: 'Electrician',
-          service: 'Electrician',
-          bg: '#FEF3C7',
-          icon: <Zap size={28} />,
-        },
-        {
-          label: 'Painter',
-          service: 'Painter',
-          bg: '#FCE7F3',
-          icon: <Paintbrush size={28} />,
-          },
+
+
+
+
+              {
+                label: 'Plumber',
+                service: 'Plumber',
+                bg: '#EAF4F7',
+                icon: <Wrench size={28} />,
+              },
+              {
+                label: 'Electrician',
+                service: 'Electrician',
+                bg: '#FEF3C7',
+                icon: <Zap size={28} />,
+              },
+              {
+                label: 'Painter',
+                service: 'Painter',
+                bg: '#FCE7F3',
+                icon: <Paintbrush size={28} />,
+              },
             ].map(item => (
               <Link key={item.service} href={`/tradespeople?service=${item.service}`} style={{ textDecoration: 'none' }}>
                 <div style={{
@@ -174,17 +197,17 @@ export default function CustomerDashboard() {
                   onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
                   onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
                 >
-                  
-              <div
-                style={{
-                marginBottom: '12px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-              >
-                {item.icon}
-                </div>
+
+                  <div
+                    style={{
+                      marginBottom: '12px',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {item.icon}
+                  </div>
                   <p style={{ margin: '0', fontWeight: '700', color: '#0B1F2A', fontSize: '0.95rem' }}>{item.label}</p>
                 </div>
               </Link>
@@ -192,12 +215,20 @@ export default function CustomerDashboard() {
           </div>
         </div>
 
+
+
+
+
+
         {/* Bookings */}
         <div>
+
+        
+
           <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#0B1F2A', marginBottom: '16px' }}>
             My Bookings
           </h2>
-          {bookings.length === 0 ? (
+          {filteredBookings.length === 0 ? (
             <div style={{
               background: 'white', borderRadius: '16px', padding: '40px',
               textAlign: 'center', border: '1px solid #e5e7eb'
@@ -212,7 +243,7 @@ export default function CustomerDashboard() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {bookings.map((booking) => (
+              {filteredBookings.map((booking) => (
                 <div key={booking.id} style={{
                   background: 'white', borderRadius: '16px', padding: '20px',
                   border: '1px solid #e5e7eb',
@@ -220,8 +251,40 @@ export default function CustomerDashboard() {
                   alignItems: 'center', flexWrap: 'wrap', gap: '12px'
                 }}>
                   <div>
-                    <p style={{ margin: '0 0 4px', fontWeight: '700', color: '#0B1F2A' }}>{booking.service}</p>
-                    <p style={{ margin: '0 0 4px', color: '#6B7280', fontSize: '0.85rem' }}>📅 {booking.date} · 📍 {booking.location}</p>
+                    <p style={{ margin: '0 0 4px', fontWeight: '700', color: 'rgb(11, 31, 42)' }}>{booking.service}</p>
+                    <p
+                      style={{
+                        margin: '0 0 4px',
+                        color: '#6B7280',
+                        fontSize: '0.85rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                        }}
+                      >
+                        <CalendarDays size={14} />
+                        {booking.date}
+                      </span>
+
+                      <span
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                        }}
+                      >
+                        <MapPin size={14} />
+                        {booking.location}
+                      </span>
+                    </p>
                     <p style={{ margin: '0', color: '#6B7280', fontSize: '0.85rem' }}>{booking.description}</p>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -252,12 +315,12 @@ export default function CustomerDashboard() {
         </div>
 
         <div style={{ marginTop: '40px' }}>
-             <RecentActivity activities={recentActivities} />
+          <RecentActivity activities={recentActivities} />
         </div>
 
-          
-  
-</div>
-  </DashboardPage>
-)
+
+
+      </div>
+    </DashboardPage>
+  )
 }

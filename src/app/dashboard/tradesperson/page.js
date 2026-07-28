@@ -6,6 +6,16 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../supabaseClient'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import {
+  Calendar,
+  CheckCircle,
+  Wrench,
+  Star,
+  Clock3,
+  MapPin,
+  CalendarDays,
+} from 'lucide-react'
+
 
 export default function TradespersonDashboard() {
   const [user, setUser] = useState(null)
@@ -15,21 +25,23 @@ export default function TradespersonDashboard() {
   const router = useRouter()
   const recentActivities = [
   {
+    type: 'booking',
     title: 'New booking request received',
     time: 'Today',
   },
   {
+    type: 'completed',
     title: 'Job marked as completed',
     time: 'Yesterday',
   },
   {
+    type: 'profile',
     title: isAvailable
       ? 'Availability set to Available'
       : 'Availability set to Unavailable',
     time: 'Recently',
   },
 ]
-
   useEffect(() => {
     async function getData() {
       const { data: { user } } = await supabase.auth.getUser()
@@ -126,33 +138,33 @@ export default function TradespersonDashboard() {
   <StatsCard
     title="Pending Jobs"
     value={bookings.filter(b => b.status === 'pending').length}
-    icon="📥"
+    icon={<Calendar size={24} color="white" />}
     color="#F59E0B"
   />
 
   <StatsCard
     title="Accepted Jobs"
     value={bookings.filter(b => b.status === 'accepted').length}
-    icon="🛠️"
+    icon={<Wrench size={24} color="white" />} 
     color="#1F6F8B"
   />
 
   <StatsCard
     title="Completed Jobs"
     value={bookings.filter(b => b.status === 'completed').length}
-    icon="✅"
+    icon={<CheckCircle size={24} color="white" />}          
     color="#10B981"
   />
 
   <StatsCard
     title="Availability"
     value={isAvailable ? 'Online' : 'Offline'}
-    icon="🟢"
+    icon={isAvailable ? <Star size={24} color="white" /> : <Clock3 size={24} color="white" />}    
     color={isAvailable ? '#10B981' : '#EF4444'}
   />
 </div>
 
-<div>
+      <div>
           <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#0B1F2A', marginBottom: '16px' }}>
             Incoming Bookings
           </h2>
@@ -165,8 +177,8 @@ export default function TradespersonDashboard() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {bookings.map((booking, index) => (
-                <div key={index} style={{
+              {bookings.map((booking) => (
+                <div key={booking.id} style={{
                   background: 'white', borderRadius: '16px', padding: '20px',
                   border: '1px solid #e5e7eb', boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
                 }}>
@@ -206,6 +218,9 @@ export default function TradespersonDashboard() {
           )}
         </div>
       </div>
+      <div style={{ marginTop: '40px' }}>
+    <RecentActivity activities={recentActivities} />
+    </div>
     </DashboardPage>
   )
 }
