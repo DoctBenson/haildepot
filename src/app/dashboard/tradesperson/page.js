@@ -57,7 +57,7 @@ export default function TradespersonDashboard() {
         .single()
       setProfile(profileData)
       setIsAvailable(profileData?.is_available ?? true)
-    
+
       const { data: bookingsData } = await supabase
         .from('bookings')
         .select('*')
@@ -84,7 +84,7 @@ export default function TradespersonDashboard() {
   }
 
 
-  
+
 
   const filteredBookings = bookings.filter((booking) => {
     if (filter === 'pending') {
@@ -278,9 +278,21 @@ export default function TradespersonDashboard() {
                       </>
                     )}
                     {booking.status === 'accepted' && (
-                      <button onClick={() => updateBookingStatus(booking.id, 'completed')}
-                        style={{ padding: '8px 20px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600' }}>
-                        Mark Complete
+                      <button
+                        onClick={() =>
+                          updateBookingStatus(booking.id, 'awaiting_confirmation')
+                        }
+                        style={{
+                          padding: '8px 20px',
+                          background: '#10b981',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontWeight: '600'
+                        }}
+                      >
+                        Mark Work Finished
                       </button>
                     )}
                     <span style={{
