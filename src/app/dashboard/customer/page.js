@@ -73,6 +73,31 @@ export default function CustomerDashboard() {
     router.push('/')
   }
 
+
+  async function confirmCompletion(bookingId) {
+  const { error } = await supabase
+    .from('bookings')
+    .update({ customer_confirmed: true })
+    .eq('id', bookingId)
+
+  if (error) {
+    console.error(error)
+    alert('Failed to confirm completion.')
+    return
+  }
+
+  setBookings(
+    bookings.map((booking) =>
+      booking.id === bookingId
+        ? { ...booking, customer_confirmed: true }
+        : booking
+    )
+  )
+
+  alert('✅ Job confirmed successfully.')
+}
+
+
   const filteredBookings = bookings.filter((booking) => {
     if (filter === 'active') {
       return booking.status !== 'completed'
