@@ -223,7 +223,7 @@ export default function CustomerDashboard() {
         {/* Bookings */}
         <div>
 
-        
+
 
           <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#0B1F2A', marginBottom: '16px' }}>
             My Bookings
@@ -295,6 +295,27 @@ export default function CustomerDashboard() {
                     }}>
                       {booking.status}
                     </span>
+
+
+
+                    {booking.status === 'completed' && !booking.customer_confirmed && (
+                      <button
+                        onClick={() => confirmCompletion(booking.id)}
+                        style={{
+                          padding: '6px 14px',
+                          background: '#10B981',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontSize: '0.8rem',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Confirm Completion
+                      </button>
+                    )}
+
                     {booking.status === 'completed' && (
                       <button
                         onClick={() => router.push(`/review/${booking.id}?tradesperson=${booking.tradesperson_id}`)}

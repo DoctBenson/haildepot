@@ -14,18 +14,44 @@ function ReviewContent({ params }) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const tradespersonId = searchParams.get('tradesperson')
+  const [alreadyReviewed, setAlreadyReviewed] = useState(false)
 
   useEffect(() => {
     async function getUser() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) router.push('/login')
-      else setUser(user)
+      if (!user) { router.push('/login')
+    }  else {
+  setUser(user)
+
+  const { data: existingReview } = await supabase
+    .from('reviews')
+    .select('id')
+    .eq('booking_id', parseInt(id))
+    .maybeSingle()
+
+  if (existingReview) {
+    setAlreadyReviewed(true)
+  }
+}
     }
     getUser()
   }, [])
 
   async function handleSubmit() {
+  try {
     setLoading(true)
+
+    const { data: existingReview } = await supabase
+  .from('reviews')
+  .select('id')
+  .eq('booking_id', parseInt(id))
+  .maybeSingle()
+
+if (existingReview) {
+  alert('You have already reviewed this booking.')
+  return
+}
+
     await supabase.from('reviews').insert({
       booking_id: parseInt(id),
       customer_id: user.id,
@@ -33,8 +59,57 @@ function ReviewContent({ params }) {
       rating,
       comment
     })
+
+    alert('⭐ Thank you! Your review has been submitted.')
+
     router.push('/dashboard/customer')
+  } catch (error) {
+    console.error(error)
+    alert('Something went wrong. Please try again.')
+  } finally {
+    setLoading(false)
   }
+}
+
+  if (alreadyReviewed) {
+  return (
+    <div
+      style={{
+        maxWidth: '500px',
+        margin: '80px auto',
+        padding: '30px',
+        background: 'white',
+        border: '1px solid #E5E7EB',
+        borderRadius: '16px',
+        textAlign: 'center',
+      }}
+    >
+      <h2 style={{ color: '#10B981', marginBottom: '16px' }}>
+        ⭐ Review Already Submitted
+      </h2>
+
+      <p style={{ color: '#6B7280', marginBottom: '24px' }}>
+        You have already reviewed this completed job.
+        Thank you for your feedback!
+      </p>
+
+      <button
+        onClick={() => router.push('/dashboard/customer')}
+        style={{
+          background: '#1F6F8B',
+          color: 'white',
+          border: 'none',
+          borderRadius: '10px',
+          padding: '12px 24px',
+          cursor: 'pointer',
+          fontWeight: '700',
+        }}
+      >
+        Back to Dashboard
+      </button>
+    </div>
+  )
+}
 
   return (
     <div style={{ maxWidth: '500px', margin: '60px auto', padding: '20px' }}>
