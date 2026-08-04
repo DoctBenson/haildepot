@@ -90,16 +90,15 @@ export default function CustomerDashboard() {
     }
 
     setBookings(
-      bookings.map((booking) =>
-        booking.id === bookingId
-          ? {
-            ...booking,
-            customer_confirmed: true,
-            status: 'completed',
-          }
-          : booking
-      )
-    )
+  bookings.map((booking) =>
+    booking.id === bookingId
+      ? {
+          ...booking,
+          status: 'completed',
+        }
+      : booking
+  )
+)
 
     alert('✅ Job confirmed successfully.')
   }
