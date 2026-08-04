@@ -75,27 +75,34 @@ export default function CustomerDashboard() {
 
 
   async function confirmCompletion(bookingId) {
-  const { error } = await supabase
-    .from('bookings')
-    .update({ customer_confirmed: true })
-    .eq('id', bookingId)
+    
+    const { error } = await supabase
+  .from('bookings')
+  .update({
+    status: 'completed',
+  })
+  .eq('id', bookingId)
 
-  if (error) {
-    console.error(error)
-    alert('Failed to confirm completion.')
-    return
-  }
+    if (error) {
+      console.error(error)
+      alert('Failed to confirm completion.')
+      return
+    }
 
-  setBookings(
-    bookings.map((booking) =>
-      booking.id === bookingId
-        ? { ...booking, customer_confirmed: true }
-        : booking
+    setBookings(
+      bookings.map((booking) =>
+        booking.id === bookingId
+          ? {
+            ...booking,
+            customer_confirmed: true,
+            status: 'completed',
+          }
+          : booking
+      )
     )
-  )
 
-  alert('✅ Job confirmed successfully.')
-}
+    alert('✅ Job confirmed successfully.')
+  }
 
 
   const filteredBookings = bookings.filter((booking) => {
@@ -323,7 +330,7 @@ export default function CustomerDashboard() {
 
 
 
-                    {booking.status === 'completed' && !booking.customer_confirmed && (
+                    {booking.status === 'awaiting_confirmation' && (
                       <button
                         onClick={() => confirmCompletion(booking.id)}
                         style={{
