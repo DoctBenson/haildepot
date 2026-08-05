@@ -31,11 +31,17 @@ export default function LoginPage() {
       .eq('id', data.user.id)
       .single()
 
-    if (profile?.role === 'tradesperson') {
-      router.push('/dashboard/tradesperson')
-    } else {
-      router.push('/dashboard/customer')
+    const dashboardRoutes = {
+      customer: '/dashboard/customer',
+      tradesperson: '/dashboard/tradesperson',
     }
+
+    console.log('Profile:', profile)
+    console.log('Role:', profile?.role)
+
+    router.push(
+      dashboardRoutes[profile?.role] ?? '/dashboard/customer'
+    )
   }
 
   async function handleGoogleLogin() {
@@ -59,31 +65,31 @@ export default function LoginPage() {
           onChange={e => setEmail(e.target.value)}
           style={{ padding: '12px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '1rem' }} />
         <div style={{ position: 'relative' }}>
-       <input
-      type={showPassword ? 'text' : 'password'}
-      placeholder="Password"
-      value={password}
-      onChange={e => setPassword(e.target.value)}
-      style={{ width: '100%', padding: '12px', paddingRight: '48px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '1rem', boxSizing: 'border-box' }}
-     />
-    <button
-      type="button"
-      onClick={() => setShowPassword(!showPassword)}
-      style={{
-        position: 'absolute', right: '12px', top: '50%',
-        transform: 'translateY(-50%)', background: 'none',
-        border: 'none', cursor: 'pointer', color: '#6B7280',
-        fontSize: '1.1rem'
-      }}
-    >
-      {showPassword ? '🙈' : '👁️'}
-    </button>
-    </div>
-    <button type="submit" disabled={loading}
-    style={{ padding: '12px', background: '#1F6F8B', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '1rem' }}>
-    {loading ? 'Logging in...' : 'Login'}
-      </button>
-    </form>
+          <input
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            style={{ width: '100%', padding: '12px', paddingRight: '48px', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '1rem', boxSizing: 'border-box' }}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            style={{
+              position: 'absolute', right: '12px', top: '50%',
+              transform: 'translateY(-50%)', background: 'none',
+              border: 'none', cursor: 'pointer', color: '#6B7280',
+              fontSize: '1.1rem'
+            }}
+          >
+            {showPassword ? '🙈' : '👁️'}
+          </button>
+        </div>
+        <button type="submit" disabled={loading}
+          style={{ padding: '12px', background: '#1F6F8B', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '1rem' }}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+      </form>
 
       <div style={{ textAlign: 'center', margin: '16px 0', color: '#6B7280' }}>or</div>
 

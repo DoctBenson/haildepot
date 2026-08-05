@@ -93,6 +93,139 @@ export default function Home() {
         </div>
       </section>
 
+
+      <section
+        style={{
+          padding: '80px 20px',
+          background: '#F8FAFC',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1100px',
+            margin: '0 auto',
+            textAlign: 'center',
+          }}
+        >
+          <h2
+            style={{
+              fontSize: '2.2rem',
+              fontWeight: '800',
+              color: '#0B1F2A',
+              marginBottom: '12px',
+            }}
+          >
+            Choose your experience
+          </h2>
+
+          <p
+            style={{
+              color: '#6B7280',
+              fontSize: '1.05rem',
+              maxWidth: '650px',
+              margin: '0 auto 50px',
+            }}
+          >
+            Whether you're looking for a trusted professional or growing your
+            trade business, HailDepot is built for you.
+          </p>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: '24px',
+            }}
+          >
+            {/* Customer */}
+
+            <div
+              style={{
+                background: 'white',
+                borderRadius: '18px',
+                padding: '36px',
+                border: '1px solid #E5E7EB',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              }}
+            >
+              <div style={{ fontSize: '3rem', marginBottom: '16px' }}>
+                👤
+              </div>
+
+              <h3
+                style={{
+                  color: '#0B1F2A',
+                  fontWeight: '700',
+                  marginBottom: '12px',
+                }}
+              >
+                I'm looking for a tradesperson
+              </h3>
+
+              <p
+                style={{
+                  color: '#6B7280',
+                  marginBottom: '28px',
+                }}
+              >
+                Find trusted plumbers, electricians, painters and other skilled
+                professionals near you.
+              </p>
+
+              <Link
+                href="/login"
+                className="btn-primary"
+              >
+                Continue as Customer
+              </Link>
+            </div>
+
+            {/* Tradesperson */}
+
+            <div
+              style={{
+                background: 'white',
+                borderRadius: '18px',
+                padding: '36px',
+                border: '1px solid #E5E7EB',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              }}
+            >
+              <div style={{ fontSize: '3rem', marginBottom: '16px' }}>
+                🛠️
+              </div>
+
+              <h3
+                style={{
+                  color: '#0B1F2A',
+                  fontWeight: '700',
+                  marginBottom: '12px',
+                }}
+              >
+                I provide trade services
+              </h3>
+
+              <p
+                style={{
+                  color: '#6B7280',
+                  marginBottom: '28px',
+                }}
+              >
+                Join HailDepot, receive verified bookings, build your reputation,
+                and grow your business.
+              </p>
+
+              <Link
+                href="/login"
+                className="btn-primary"
+              >
+                Continue as Tradesperson
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="how-it-works">
         <h3>How It Works</h3>
         <div className="steps">
@@ -114,11 +247,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="are-you-tradesperson">
-        <h3>Are you a tradesperson?</h3>
-        <p>Join Hail Depot and get more clients in Accra and Kasoa</p>
-        <Link href="/register?role=tradesperson" className="btn-primary">Join as a Tradesperson</Link>
-      </section>
+    
     </div>
   )
 }
