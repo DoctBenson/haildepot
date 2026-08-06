@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
+  const [selectedRole, setSelectedRole] = useState('customer')
 
   async function handleLogin(e) {
     e.preventDefault()
@@ -39,6 +40,14 @@ export default function LoginPage() {
     console.log('Profile:', profile)
     console.log('Role:', profile?.role)
 
+    if (profile?.role !== selectedRole) {
+      setError(
+        `This account is registered as a ${profile?.role}. Please select the correct account type.`
+      )
+      setLoading(false)
+      return
+    }
+
     router.push(
       dashboardRoutes[profile?.role] ?? '/dashboard/customer'
     )
@@ -57,6 +66,57 @@ export default function LoginPage() {
     <div style={{ maxWidth: '400px', margin: '80px auto', padding: '20px' }}>
       <h1 style={{ color: '#1F6F8B', marginBottom: '8px' }}>Hail Depot</h1>
       <h2 style={{ marginBottom: '24px' }}>Welcome back</h2>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '12px',
+          marginBottom: '24px',
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => setSelectedRole('customer')}
+          style={{
+            padding: '14px',
+            borderRadius: '10px',
+            border:
+              selectedRole === 'customer'
+                ? '2px solid #1F6F8B'
+                : '1px solid #E5E7EB',
+            background:
+              selectedRole === 'customer'
+                ? '#EAF4F7'
+                : 'white',
+            cursor: 'pointer',
+            fontWeight: '700',
+          }}
+        >
+          👤 Customer
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setSelectedRole('tradesperson')}
+          style={{
+            padding: '14px',
+            borderRadius: '10px',
+            border:
+              selectedRole === 'tradesperson'
+                ? '2px solid #1F6F8B'
+                : '1px solid #E5E7EB',
+            background:
+              selectedRole === 'tradesperson'
+                ? '#EAF4F7'
+                : 'white',
+            cursor: 'pointer',
+            fontWeight: '700',
+          }}
+        >
+          🛠 Tradesperson
+        </button>
+      </div>
 
       {error && <p style={{ color: 'red', marginBottom: '16px' }}>{error}</p>}
 
