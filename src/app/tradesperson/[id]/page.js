@@ -33,6 +33,10 @@ export default function TradespersonProfile({ params }) {
         .eq('id', id)
         .single()
 
+      console.log('Profile loaded:', profile)
+      console.log('is_available:', profile?.is_available)
+      console.log('Tradesperson state:', tradesperson)
+
       setTradesperson(profile)
       setBio(profile?.bio || '')
       setRate(profile?.rate || '')
@@ -84,7 +88,7 @@ export default function TradespersonProfile({ params }) {
 
   return (
     <div style={{ minHeight: '100vh', background: '#f9fafb' }}>
-      
+
       {/* Navbar */}
       <nav style={{
         background: 'white', borderBottom: '1px solid #e5e7eb',
@@ -156,6 +160,24 @@ export default function TradespersonProfile({ params }) {
                 )}
               </div>
               <p style={{ margin: '4px 0', color: '#1F6F8B', fontWeight: '600', fontSize: '1rem' }}>{tradesperson.trade}</p>
+
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  marginTop: '8px',
+                  padding: '6px 12px',
+                  borderRadius: '999px',
+                  background: tradesperson.is_available ? '#DCFCE7' : '#FEE2E2',
+                  color: tradesperson.is_available ? '#166534' : '#991B1B',
+                  fontWeight: '600',
+                  fontSize: '0.85rem'
+                }}
+              >
+                {tradesperson.is_available ? '🟢 Available' : '🔴 Busy'}
+              </div>
+
               <p style={{ margin: '4px 0', color: '#6B7280', fontSize: '0.9rem' }}>📍 {tradesperson.location}</p>
 
               {avgRating && (
@@ -275,37 +297,37 @@ export default function TradespersonProfile({ params }) {
               )}
             </div>
           ) : (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-    <Link href={`/book/${id}`} style={{
-      display: 'block', textAlign: 'center', padding: '14px',
-      background: '#1F6F8B', color: 'white', borderRadius: '12px',
-      textDecoration: 'none', fontWeight: '700', fontSize: '1rem'
-    }}>
-      Book Now
-    </Link>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <Link href={`/book/${id}`} style={{
+                display: 'block', textAlign: 'center', padding: '14px',
+                background: '#1F6F8B', color: 'white', borderRadius: '12px',
+                textDecoration: 'none', fontWeight: '700', fontSize: '1rem'
+              }}>
+                Book Now
+              </Link>
 
-        {tradesperson.phone && (
-      <div style={{ display: 'flex', gap: '12px' }}>
-        <a href={`tel:${tradesperson.phone}`} style={{
-          flex: 1, display: 'block', textAlign: 'center', padding: '12px',
-          background: '#0B1F2A', color: 'white', borderRadius: '12px',
-          textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem'
-        }}>
-          📞 Call
-        </a>
-        <a href={`https://wa.me/${tradesperson.phone.replace(/\D/g, '')}`}
-          target="_blank" rel="noopener noreferrer"
-          style={{
-            flex: 1, display: 'block', textAlign: 'center', padding: '12px',
-            background: '#25D366', color: 'white', borderRadius: '12px',
-            textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem'
-          }}>
-          💬 WhatsApp
-        </a>
-      </div>
-    )}
-  </div>
-  )}
+              {tradesperson.phone && (
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <a href={`tel:${tradesperson.phone}`} style={{
+                    flex: 1, display: 'block', textAlign: 'center', padding: '12px',
+                    background: '#0B1F2A', color: 'white', borderRadius: '12px',
+                    textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem'
+                  }}>
+                    📞 Call
+                  </a>
+                  <a href={`https://wa.me/${tradesperson.phone.replace(/\D/g, '')}`}
+                    target="_blank" rel="noopener noreferrer"
+                    style={{
+                      flex: 1, display: 'block', textAlign: 'center', padding: '12px',
+                      background: '#25D366', color: 'white', borderRadius: '12px',
+                      textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem'
+                    }}>
+                    💬 WhatsApp
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Reviews */}
