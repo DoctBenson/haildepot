@@ -112,7 +112,7 @@ export default function TradespersonDashboard() {
     >
 
 
-      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 20px' }}>
+      <div className="dashboard-content" style={{ padding: '32px 20px' }}>
         <div style={{
           background: 'white', borderRadius: '20px', padding: '24px',
           marginBottom: '32px', border: '1px solid #e5e7eb',
@@ -159,14 +159,7 @@ export default function TradespersonDashboard() {
           </Link>
         </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '20px',
-            marginBottom: '40px',
-          }}
-        >
+        <div className="dashboard-stats-grid">
           <StatsCard
             title="Pending Jobs"
             value={bookings.filter(b => b.status === 'pending').length}
@@ -226,7 +219,7 @@ export default function TradespersonDashboard() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {filteredBookings.map((booking) => (
-                <div key={booking.id} style={{
+                <div key={booking.id} className="dashboard-booking-card" style={{
                   background: 'white', borderRadius: '16px', padding: '20px',
                   border: '1px solid #e5e7eb', boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
                 }}>

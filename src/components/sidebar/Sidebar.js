@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+
 import {
   Home,
   Briefcase,
@@ -10,79 +12,78 @@ import {
   GraduationCap,
   Settings,
 } from 'lucide-react';
+import SidebarItem from './SidebarItem';
 
-export default function Sidebar() {
-  const menuItems = [
-    { label: 'Home', icon: Home },
-    { label: 'Jobs', icon: Briefcase },
-    { label: 'Customers', icon: Users },
-    { label: 'Estimates & Invoices', icon: FileText },
-    { label: 'Marketplace', icon: ShoppingCart },
-    { label: 'Reviews', icon: Star },
-    { label: 'Academy', icon: GraduationCap },
-    { label: 'Settings', icon: Settings },
-  ];
+export const dashboardMenuItems = [
+  { label: 'Home', icon: Home },
+  { label: 'Jobs', icon: Briefcase },
+  { label: 'Customers', icon: Users },
+  { label: 'Estimates & Invoices', icon: FileText },
+  { label: 'Marketplace', icon: ShoppingCart },
+  { label: 'Reviews', icon: Star },
+  { label: 'Academy', icon: GraduationCap },
+  { label: 'Settings', icon: Settings },
+];
+
+export default function Sidebar({ isOpen = false, isDrawer = false, onClose, onLogout }) {
+  const navigationRef = useRef(null);
+  const handleItemClick = () => onClose?.();
+
+  const trapFocus = (event) => {
+    if (!isDrawer || !isOpen || event.key !== 'Tab') return;
+
+    const focusableElements = [...navigationRef.current.querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )].filter((element) => !element.hasAttribute('inert'));
+
+    if (focusableElements.length === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (event.shiftKey && document.activeElement === firstElement) {
+      event.preventDefault();
+      lastElement.focus();
+    } else if (!event.shiftKey && document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  };
+
+  useEffect(() => {
+    if (!isDrawer || !isOpen) return;
+    navigationRef.current?.querySelector('button')?.focus();
+  }, [isDrawer, isOpen]);
 
   return (
-    <aside
-      style={{
-        width: '260px',
-        minHeight: '100vh',
-        background: '#ffffff',
-        borderRight: '1px solid #e5e7eb',
-        padding: '32px 20px',
-        boxSizing: 'border-box',
-      }}
-    >
-      <h2
-        style={{
-          margin: '0 0 40px',
-          fontSize: '1.5rem',
-          fontWeight: 800,
-          color: '#0B1F2A',
-        }}
+    <>
+      <button
+        type="button"
+        className={`dashboard-drawer-backdrop${isOpen ? ' is-open' : ''}`}
+        aria-label="Close navigation menu"
+        tabIndex={-1}
+        onClick={onClose}
+      />
+      <aside
+        ref={navigationRef}
+        id="dashboard-navigation"
+        className={`dashboard-sidebar${isOpen ? ' is-open' : ''}`}
+        aria-label="Dashboard navigation"
+        aria-hidden={isDrawer && !isOpen}
+        inert={isDrawer && !isOpen}
+        onKeyDown={trapFocus}
       >
-        Hail<span style={{ color: '#1F6F8B' }}>Depot</span>
-      </h2>
-
-      <nav>
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-
-          return (
-            <div
-              key={item.label}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '14px',
-                padding: '14px 16px',
-                borderRadius: '12px',
-                cursor: 'pointer',
-                marginBottom: '8px',
-                transition: 'background 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#F3F4F6';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'transparent';
-              }}
-            >
-              <Icon size={20} strokeWidth={2} />
-
-              <span
-                style={{
-                  fontWeight: 600,
-                  color: '#374151',
-                }}
-              >
-                {item.label}
-              </span>
-            </div>
-          );
-        })}
-      </nav>
-    </aside>
+        <div className="sidebar-brand">Hail<span>Depot</span></div>
+        <nav className="sidebar-nav">
+          {dashboardMenuItems.map((item) => (
+            <SidebarItem key={item.label} {...item} onClick={handleItemClick} />
+          ))}
+        </nav>
+        <button type="button" className="sidebar-logout" onClick={onLogout}>Log out</button>
+      </aside>
+    </>
   );
 }

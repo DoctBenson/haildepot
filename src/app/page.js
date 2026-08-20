@@ -131,6 +131,7 @@ export default function Home() {
           </p>
 
           <div
+            className="home-role-grid"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',

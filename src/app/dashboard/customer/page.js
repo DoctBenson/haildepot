@@ -133,7 +133,7 @@ export default function CustomerDashboard() {
       onLogout={handleLogout}
     >
 
-      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 20px' }}>
+      <div className="dashboard-content" style={{ padding: '32px 20px' }}>
 
         {/* Welcome */}
         <div style={{ marginBottom: '32px' }}>
@@ -144,14 +144,7 @@ export default function CustomerDashboard() {
         </div>
 
         {/* Dashboard Statistics */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '20px',
-            marginBottom: '40px',
-          }}
-        >
+        <div className="dashboard-stats-grid">
           <StatsCard
             title="Active Bookings"
             value={bookings.filter(b => b.status !== 'completed').length}
@@ -190,7 +183,7 @@ export default function CustomerDashboard() {
           <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#0B1F2A', marginBottom: '16px' }}>
             What do you need?
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '16px' }}>
+          <div className="dashboard-service-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '16px' }}>
             {[
 
 
@@ -275,7 +268,7 @@ export default function CustomerDashboard() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {filteredBookings.map((booking) => (
-                <div key={booking.id} style={{
+                <div key={booking.id} className="dashboard-booking-card" style={{
                   background: 'white', borderRadius: '16px', padding: '20px',
                   border: '1px solid #e5e7eb',
                   display: 'flex', justifyContent: 'space-between',
@@ -318,7 +311,7 @@ export default function CustomerDashboard() {
                     </p>
                     <p style={{ margin: '0', color: '#6B7280', fontSize: '0.85rem' }}>{booking.description}</p>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div className="dashboard-booking-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <span style={{
                       padding: '6px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '700',
                       background: booking.status === 'completed' ? '#dcfce7' : booking.status === 'accepted' ? '#dbeafe' : '#fef3c7',

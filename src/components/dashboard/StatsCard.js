@@ -6,11 +6,13 @@ export default function StatsCard({
   icon,
   color = '#1F6F8B',
   onClick,
+  className = '',
 
 }) {
   return (
     <div
       onClick={onClick}
+      className={`dashboard-stat-card ${className}`}
       style={{
         background: '#FFFFFF',
         border: '1px solid #E5E7EB',
