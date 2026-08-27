@@ -20,8 +20,70 @@ button, input, select, textarea { font: inherit; }
 .sidebar-brand { margin-bottom: 40px; font-size: 1.5rem; }
 .sidebar-brand span { color: #1F6F8B; }
 .sidebar-nav { display: flex; flex-direction: column; gap: 8px; }
-.sidebar-item, .sidebar-logout { width: 100%; min-height: 48px; border: 0; border-radius: 12px; background: transparent; color: #374151; cursor: pointer; font-weight: 600; text-align: left; display: flex; align-items: center; gap: 14px; padding: 12px 16px; }
-.sidebar-item:hover, .sidebar-item:focus-visible { background: #f3f4f6; }
+.sidebar-item,
+.sidebar-logout {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #374151;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.sidebar-item:hover,
+.sidebar-item:focus-visible {
+  background: #f3f4f6;
+  color: #0b1f2a;
+  text-decoration: none;
+}
+
+
+.sidebar-item.is-active {
+  background: #eaf4f7;
+  color: #1f6f8b;
+  font-weight: 700;
+}
+
+.sidebar-item.is-active:hover {
+  background: #e3f0f4;
+  color: #1f6f8b;
+}
+
+.sidebar-item.is-active svg {
+  stroke-width: 2.25;
+}
+
+.sidebar-item:active {
+  transform: scale(0.985);
+}
+
+.sidebar-item:focus-visible,
+.sidebar-logout:focus-visible {
+  outline: 3px solid rgba(31, 111, 139, 0.22);
+  outline-offset: 2px;
+}
+
+.sidebar-item svg {
+  flex: 0 0 auto;
+  transition: transform 160ms ease;
+}
+
+.sidebar-item:hover svg {
+  transform: translateX(1px);
+}
 .sidebar-logout { display: none; margin-top: auto; border: 1px solid #d1d5db; justify-content: center; }
 .dashboard-drawer-backdrop { display: none; }
 .dashboard-topbar { min-height: 72px; background: #fff; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 10px 32px; position: sticky; top: 0; z-index: 20; }

@@ -1,10 +1,33 @@
 'use client';
 
-export default function SidebarItem({ icon: Icon, label, onClick }) {
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+export default function SidebarItem({
+  icon: Icon,
+  label,
+  href = '#',
+  onClick,
+}) {
+  const pathname = usePathname();
+
+  const isActive =
+    href !== '#' &&
+    (pathname === href || pathname.startsWith(`${href}/`));
+
   return (
-    <button type="button" className="sidebar-item" onClick={onClick}>
-      <Icon size={20} strokeWidth={2} aria-hidden="true" />
+    <Link
+      href={href}
+      className={`sidebar-item${isActive ? ' is-active' : ''}`}
+      onClick={onClick}
+      aria-current={isActive ? 'page' : undefined}
+    >
+      <Icon
+        size={20}
+        strokeWidth={2}
+        aria-hidden="true"
+      />
       <span>{label}</span>
-    </button>
+    </Link>
   );
 }

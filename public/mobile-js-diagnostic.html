@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HailDepot Native JavaScript Diagnostic</title>
+    <style>
+      body { margin: 0; padding: 24px; font-family: system-ui, sans-serif; background: #f9fafb; color: #0b1f2a; }
+      main { max-width: 640px; margin: 0 auto; }
+      h1 { margin: 0 0 8px; font-size: 1.5rem; }
+      .status, .details { margin: 16px 0; padding: 16px; border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; }
+      .status { font-weight: 700; }
+      dl { margin: 0; overflow-wrap: anywhere; }
+      dt { margin-top: 12px; font-weight: 700; }
+      dt:first-child { margin-top: 0; }
+      dd { margin: 4px 0 0; color: #4b5563; }
+      button { width: 100%; min-height: 48px; border: 0; border-radius: 10px; background: #1f6f8b; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>HailDepot native JavaScript diagnostic</h1>
+      <p>HTML rendered</p>
+      <div id="javascript-status" class="status">JavaScript not running</div>
+
+      <div class="details">
+        <dl>
+          <dt>Browser user-agent</dt>
+          <dd id="user-agent">Unavailable</dd>
+          <dt>Current URL</dt>
+          <dd id="current-url">Unavailable</dd>
+          <dt>Viewport</dt>
+          <dd id="viewport">Unavailable</dd>
+        </dl>
+      </div>
+
+      <button id="native-button" type="button">Tap native JavaScript button</button>
+      <p class="status">Native tap count: <span id="native-count">0</span></p>
+    </main>
+
+    <script>
+      (function () {
+        var count = 0;
+        var status = document.getElementById('javascript-status');
+        var countElement = document.getElementById('native-count');
+
+        status.textContent = 'Native JavaScript running';
+        document.getElementById('user-agent').textContent = navigator.userAgent;
+        document.getElementById('current-url').textContent = window.location.href;
+
+        function updateViewport() {
+          document.getElementById('viewport').textContent = window.innerWidth + ' × ' + window.innerHeight;
+        }
+
+        updateViewport();
+        window.addEventListener('resize', updateViewport);
+        document.getElementById('native-button').addEventListener('click', function () {
+          count += 1;
+          countElement.textContent = count;
+        });
+      })();
+    </script>
+  </body>
+</html>
