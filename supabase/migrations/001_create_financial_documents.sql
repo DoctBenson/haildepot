@@ -19,7 +19,7 @@ CREATE TABLE public.estimates (
   CONSTRAINT estimates_booking_id_fkey
     FOREIGN KEY (booking_id)
     REFERENCES public.bookings(id)
-    ON DELETE CASCADE,
+    ON DELETE RESTRICT,
 
   CONSTRAINT estimates_status_check
     CHECK (status IN ('draft', 'sent', 'approved', 'rejected', 'expired')),
