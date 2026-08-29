@@ -201,3 +201,19 @@ ON public.bookings
 FOR SELECT
 TO public
 USING (auth.uid() = customer_id);
+
+CREATE POLICY "Customers and tradespeople can view their estimates"
+ON public.estimates
+FOR SELECT
+TO public
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.bookings
+    WHERE bookings.id = estimates.booking_id
+      AND (
+        auth.uid() = bookings.customer_id
+        OR auth.uid() = bookings.tradesperson_id
+      )
+  )
+);
