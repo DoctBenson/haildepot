@@ -316,3 +316,20 @@ WITH CHECK (
       AND auth.uid() = bookings.tradesperson_id
   )
 );
+
+
+
+CREATE POLICY "Tradespeople can delete estimate items"
+ON public.estimate_items
+FOR DELETE
+TO public
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.estimates
+    JOIN public.bookings
+      ON bookings.id = estimates.booking_id
+    WHERE estimates.id = estimate_items.estimate_id
+      AND auth.uid() = bookings.tradesperson_id
+  )
+);
