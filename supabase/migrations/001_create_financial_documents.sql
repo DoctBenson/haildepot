@@ -194,3 +194,10 @@ ALTER TABLE public.estimate_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.invoices ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.invoice_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.document_sequences ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "Customers can view their bookings"
+ON public.bookings
+FOR SELECT
+TO public
+USING (auth.uid() = customer_id);
