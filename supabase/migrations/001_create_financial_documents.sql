@@ -66,3 +66,55 @@ CREATE TABLE public.estimate_items (
   CONSTRAINT estimate_items_line_total_check
     CHECK (line_total >= 0)
 );
+
+
+CREATE TABLE public.invoices (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  booking_id bigint NOT NULL,
+  estimate_id bigint,
+  invoice_number text NOT NULL,
+  status text NOT NULL DEFAULT 'draft',
+  issue_date date NOT NULL DEFAULT CURRENT_DATE,
+  due_date date,
+  currency text NOT NULL DEFAULT 'GHS',
+  subtotal numeric NOT NULL DEFAULT 0,
+  tax_rate numeric,
+  tax numeric,
+  discount_rate numeric,
+  discount numeric,
+  total numeric NOT NULL DEFAULT 0,
+  notes text,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+
+  CONSTRAINT invoices_booking_id_fkey
+    FOREIGN KEY (booking_id)
+    REFERENCES public.bookings(id)
+    ON DELETE RESTRICT,
+
+  CONSTRAINT invoices_estimate_id_fkey
+    FOREIGN KEY (estimate_id)
+    REFERENCES public.estimates(id)
+    ON DELETE SET NULL,
+
+  CONSTRAINT invoices_status_check
+    CHECK (status IN ('draft', 'sent', 'paid', 'overdue', 'cancelled')),
+
+  CONSTRAINT invoices_subtotal_check
+    CHECK (subtotal >= 0),
+
+  CONSTRAINT invoices_tax_rate_check
+    CHECK (tax_rate IS NULL OR tax_rate >= 0),
+
+  CONSTRAINT invoices_tax_check
+    CHECK (tax IS NULL OR tax >= 0),
+
+  CONSTRAINT invoices_discount_rate_check
+    CHECK (discount_rate IS NULL OR discount_rate >= 0),
+
+  CONSTRAINT invoices_discount_check
+    CHECK (discount IS NULL OR discount >= 0),
+
+  CONSTRAINT invoices_total_check
+    CHECK (total >= 0)
+);
