@@ -217,3 +217,17 @@ USING (
       )
   )
 );
+
+
+CREATE POLICY "Tradespeople can create estimates for their bookings"
+ON public.estimates
+FOR INSERT
+TO public
+WITH CHECK (
+  EXISTS (
+    SELECT 1
+    FROM public.bookings
+    WHERE bookings.id = estimates.booking_id
+      AND auth.uid() = bookings.tradesperson_id
+  )
+);
