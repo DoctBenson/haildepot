@@ -42,3 +42,27 @@ CREATE TABLE public.estimates (
   CONSTRAINT estimates_total_check
     CHECK (total >= 0)
 );
+
+
+CREATE TABLE public.estimate_items (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  estimate_id bigint NOT NULL,
+  description text NOT NULL,
+  quantity numeric NOT NULL DEFAULT 1,
+  unit_price numeric NOT NULL DEFAULT 0,
+  line_total numeric NOT NULL DEFAULT 0,
+
+  CONSTRAINT estimate_items_estimate_id_fkey
+    FOREIGN KEY (estimate_id)
+    REFERENCES public.estimates(id)
+    ON DELETE CASCADE,
+
+  CONSTRAINT estimate_items_quantity_check
+    CHECK (quantity > 0),
+
+  CONSTRAINT estimate_items_unit_price_check
+    CHECK (unit_price >= 0),
+
+  CONSTRAINT estimate_items_line_total_check
+    CHECK (line_total >= 0)
+);
