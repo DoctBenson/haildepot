@@ -187,3 +187,10 @@ CREATE INDEX invoice_items_invoice_id_idx
 
 CREATE INDEX document_sequences_tradesperson_id_idx
   ON public.document_sequences (tradesperson_id);
+
+
+ALTER TABLE public.estimates ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.estimate_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.invoices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.invoice_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.document_sequences ENABLE ROW LEVEL SECURITY;
