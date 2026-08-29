@@ -118,3 +118,27 @@ CREATE TABLE public.invoices (
   CONSTRAINT invoices_total_check
     CHECK (total >= 0)
 );
+
+
+CREATE TABLE public.invoice_items (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  invoice_id bigint NOT NULL,
+  description text NOT NULL,
+  quantity numeric NOT NULL DEFAULT 1,
+  unit_price numeric NOT NULL DEFAULT 0,
+  line_total numeric NOT NULL DEFAULT 0,
+
+  CONSTRAINT invoice_items_invoice_id_fkey
+    FOREIGN KEY (invoice_id)
+    REFERENCES public.invoices(id)
+    ON DELETE CASCADE,
+
+  CONSTRAINT invoice_items_quantity_check
+    CHECK (quantity > 0),
+
+  CONSTRAINT invoice_items_unit_price_check
+    CHECK (unit_price >= 0),
+
+  CONSTRAINT invoice_items_line_total_check
+    CHECK (line_total >= 0)
+);
