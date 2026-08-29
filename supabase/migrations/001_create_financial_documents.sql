@@ -142,3 +142,29 @@ CREATE TABLE public.invoice_items (
   CONSTRAINT invoice_items_line_total_check
     CHECK (line_total >= 0)
 );
+
+
+CREATE TABLE public.document_sequences (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  tradesperson_id uuid NOT NULL,
+  document_type text NOT NULL,
+  year integer NOT NULL,
+  next_number integer NOT NULL DEFAULT 1,
+
+  CONSTRAINT document_sequences_tradesperson_id_fkey
+    FOREIGN KEY (tradesperson_id)
+    REFERENCES public.profiles(id)
+    ON DELETE RESTRICT,
+
+  CONSTRAINT document_sequences_document_type_check
+    CHECK (document_type IN ('estimate', 'invoice')),
+
+  CONSTRAINT document_sequences_year_check
+    CHECK (year >= 2000),
+
+  CONSTRAINT document_sequences_next_number_check
+    CHECK (next_number > 0),
+
+  CONSTRAINT document_sequences_unique
+    UNIQUE (tradesperson_id, document_type, year)
+);
