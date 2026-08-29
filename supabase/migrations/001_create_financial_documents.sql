@@ -231,3 +231,26 @@ WITH CHECK (
       AND auth.uid() = bookings.tradesperson_id
   )
 );
+
+
+
+CREATE POLICY "Tradespeople can update their estimates"
+ON public.estimates
+FOR UPDATE
+TO public
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.bookings
+    WHERE bookings.id = estimates.booking_id
+      AND auth.uid() = bookings.tradesperson_id
+  )
+)
+WITH CHECK (
+  EXISTS (
+    SELECT 1
+    FROM public.bookings
+    WHERE bookings.id = estimates.booking_id
+      AND auth.uid() = bookings.tradesperson_id
+  )
+);
