@@ -168,3 +168,22 @@ CREATE TABLE public.document_sequences (
   CONSTRAINT document_sequences_unique
     UNIQUE (tradesperson_id, document_type, year)
 );
+
+
+CREATE INDEX estimates_booking_id_idx
+  ON public.estimates (booking_id);
+
+CREATE INDEX estimate_items_estimate_id_idx
+  ON public.estimate_items (estimate_id);
+
+CREATE INDEX invoices_booking_id_idx
+  ON public.invoices (booking_id);
+
+CREATE INDEX invoices_estimate_id_idx
+  ON public.invoices (estimate_id);
+
+CREATE INDEX invoice_items_invoice_id_idx
+  ON public.invoice_items (invoice_id);
+
+CREATE INDEX document_sequences_tradesperson_id_idx
+  ON public.document_sequences (tradesperson_id);
