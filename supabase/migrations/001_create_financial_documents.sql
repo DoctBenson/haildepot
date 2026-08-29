@@ -254,3 +254,22 @@ WITH CHECK (
       AND auth.uid() = bookings.tradesperson_id
   )
 );
+
+
+CREATE POLICY "Customers and tradespeople can view estimate items"
+ON public.estimate_items
+FOR SELECT
+TO public
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.estimates
+    JOIN public.bookings
+      ON bookings.id = estimates.booking_id
+    WHERE estimates.id = estimate_items.estimate_id
+      AND (
+        auth.uid() = bookings.customer_id
+        OR auth.uid() = bookings.tradesperson_id
+      )
+  )
+);
