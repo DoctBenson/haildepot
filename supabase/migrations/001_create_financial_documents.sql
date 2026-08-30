@@ -351,3 +351,17 @@ USING (
       )
   )
 );
+
+
+CREATE POLICY "Tradespeople can create invoices for their bookings"
+ON public.invoices
+FOR INSERT
+TO public
+WITH CHECK (
+  EXISTS (
+    SELECT 1
+    FROM public.bookings
+    WHERE bookings.id = invoices.booking_id
+      AND auth.uid() = bookings.tradesperson_id
+  )
+);
