@@ -333,3 +333,21 @@ USING (
       AND auth.uid() = bookings.tradesperson_id
   )
 );
+
+
+
+CREATE POLICY "Customers and tradespeople can view their invoices"
+ON public.invoices
+FOR SELECT
+TO public
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.bookings
+    WHERE bookings.id = invoices.booking_id
+      AND (
+        auth.uid() = bookings.customer_id
+        OR auth.uid() = bookings.tradesperson_id
+      )
+  )
+);
