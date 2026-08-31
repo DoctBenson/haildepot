@@ -452,3 +452,52 @@ WITH CHECK (
       AND auth.uid() = bookings.tradesperson_id
   )
 );
+
+
+
+
+CREATE POLICY "Tradespeople can delete invoice items"
+ON public.invoice_items
+FOR DELETE
+TO public
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.invoices
+    JOIN public.bookings
+      ON bookings.id = invoices.booking_id
+    WHERE invoices.id = invoice_items.invoice_id
+      AND auth.uid() = bookings.tradesperson_id
+  )
+);
+
+
+
+CREATE POLICY "Tradespeople can view their document sequences"
+ON public.document_sequences
+FOR SELECT
+TO public
+USING (
+  auth.uid() = tradesperson_id
+);
+
+
+CREATE POLICY "Tradespeople can create their document sequences"
+ON public.document_sequences
+FOR INSERT
+TO public
+WITH CHECK (
+  auth.uid() = tradesperson_id
+);
+
+
+CREATE POLICY "Tradespeople can update their document sequences"
+ON public.document_sequences
+FOR UPDATE
+TO public
+USING (
+  auth.uid() = tradesperson_id
+)
+WITH CHECK (
+  auth.uid() = tradesperson_id
+);
