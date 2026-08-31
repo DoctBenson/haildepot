@@ -409,3 +409,20 @@ USING (
       )
   )
 );
+
+
+
+CREATE POLICY "Tradespeople can create invoice items"
+ON public.invoice_items
+FOR INSERT
+TO public
+WITH CHECK (
+  EXISTS (
+    SELECT 1
+    FROM public.invoices
+    JOIN public.bookings
+      ON bookings.id = invoices.booking_id
+    WHERE invoices.id = invoice_items.invoice_id
+      AND auth.uid() = bookings.tradesperson_id
+  )
+);
