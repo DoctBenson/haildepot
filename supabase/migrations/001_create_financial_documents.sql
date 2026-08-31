@@ -426,3 +426,29 @@ WITH CHECK (
       AND auth.uid() = bookings.tradesperson_id
   )
 );
+
+
+CREATE POLICY "Tradespeople can update invoice items"
+ON public.invoice_items
+FOR UPDATE
+TO public
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.invoices
+    JOIN public.bookings
+      ON bookings.id = invoices.booking_id
+    WHERE invoices.id = invoice_items.invoice_id
+      AND auth.uid() = bookings.tradesperson_id
+  )
+)
+WITH CHECK (
+  EXISTS (
+    SELECT 1
+    FROM public.invoices
+    JOIN public.bookings
+      ON bookings.id = invoices.booking_id
+    WHERE invoices.id = invoice_items.invoice_id
+      AND auth.uid() = bookings.tradesperson_id
+  )
+);
