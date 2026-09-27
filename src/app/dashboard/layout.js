@@ -31,28 +31,35 @@ export default function DashboardLayout({ children }) {
 
   useEffect(() => {
     const loadUserRole = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      try {
+        const {
+          data: { user },
+          error: authError,
+        } = await supabase.auth.getUser();
 
-      if (!user) {
+        if (authError) throw authError;
+
+        if (!user) {
+          setRole(null);
+          return;
+        }
+
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (error) {
+          console.error('Failed to load user role:', error);
+          setRole(null);
+          return;
+        }
+
+        setRole(profile?.role ?? null);
+      } catch {
         setRole(null);
-        return;
       }
-
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-      if (error) {
-        console.error('Failed to load user role:', error);
-        setRole(null);
-        return;
-      }
-
-      setRole(profile?.role ?? null);
     };
 
     loadUserRole();

@@ -9,6 +9,7 @@ export default function JobsPage() {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [bookings, setBookings] = useState([]);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function JobsPage() {
   useEffect(() => {
     async function loadJobs() {
       setLoading(true);
+      setError(null);
 
       const {
         data: { user },
@@ -36,6 +38,7 @@ export default function JobsPage() {
 
       if (profileError) {
         console.error('Failed to load profile:', profileError);
+        setError('Unable to load your profile. Please try again.');
         setLoading(false);
         return;
       }
@@ -57,6 +60,7 @@ export default function JobsPage() {
       if (bookingsError) {
         console.error('Failed to load jobs:', bookingsError);
         setBookings([]);
+        setError('Unable to load jobs. Please refresh and try again.');
       } else {
         setBookings(bookingsData || []);
       }
@@ -106,7 +110,20 @@ export default function JobsPage() {
         </p>
       </div>
 
-      {bookings.length === 0 ? (
+      {error ? (
+        <div
+          role="alert"
+          style={{
+            background: '#fef2f2',
+            borderRadius: '16px',
+            padding: '24px',
+            color: '#b91c1c',
+            border: '1px solid #fecaca',
+          }}
+        >
+          {error}
+        </div>
+      ) : bookings.length === 0 ? (
         <div
           style={{
             background: 'white',
@@ -134,13 +151,16 @@ export default function JobsPage() {
           }}
         >
           {bookings.map((booking) => (
-            <div
+            <Link
               key={booking.id}
+              href={`/jobs/${booking.id}`}
               style={{
                 background: 'white',
                 borderRadius: '16px',
                 padding: '20px',
                 border: '1px solid #e5e7eb',
+                color: 'inherit',
+                textDecoration: 'none',
               }}
             >
               <p
@@ -200,7 +220,7 @@ export default function JobsPage() {
               >
                 {booking.status}
               </span>
-            </div>
+            </Link>
           ))}
         </div>
       )}

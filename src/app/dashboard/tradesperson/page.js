@@ -2,7 +2,7 @@
 import StatsCard from '../../../components/dashboard/StatsCard'
 import DashboardPage from '../../../components/dashboard/DashboardPage'
 import RecentActivity from '../../../components/dashboard/RecentActivity'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../../supabaseClient'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -22,6 +22,8 @@ export default function TradespersonDashboard() {
   const [bookings, setBookings] = useState([])
   const [isAvailable, setIsAvailable] = useState(true)
   const [filter, setFilter] = useState('all')
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
   const router = useRouter()
   const recentActivities = [
     {
@@ -42,30 +44,48 @@ export default function TradespersonDashboard() {
       time: 'Recently',
     },
   ]
-  useEffect(() => {
-    async function getData() {
-      const { data: { user } } = await supabase.auth.getUser()
+  const getData = useCallback(async () => {
+    setIsLoading(true)
+    setLoadError('')
+
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError) throw authError
+
       if (!user) {
         router.push('/login')
         return
       }
+
       setUser(user)
-      const { data: profileData } = await supabase
+
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single()
+      if (profileError) throw profileError
+
       setProfile(profileData)
       setIsAvailable(profileData?.is_available ?? true)
 
-      const { data: bookingsData } = await supabase
+      const { data: bookingsData, error: bookingsError } = await supabase
         .from('bookings')
         .select('*')
         .eq('tradesperson_id', user.id)
+      if (bookingsError) throw bookingsError
+
       setBookings(bookingsData || [])
+    } catch {
+      setLoadError('We could not reach your dashboard data. Check your connection and try again.')
+    } finally {
+      setIsLoading(false)
     }
-    getData()
   }, [router])
+
+  useEffect(() => {
+    getData()
+  }, [getData])
 
   async function handleLogout() {
     await supabase.auth.signOut()
@@ -102,7 +122,29 @@ export default function TradespersonDashboard() {
     return true
   })
 
-  if (!user) return <p style={{ padding: '40px' }}>Loading...</p>
+  if (loadError) {
+    return (
+      <div style={{ padding: '40px' }}>
+        <p style={{ marginBottom: '16px', color: '#6B7280' }}>{loadError}</p>
+        <button
+          onClick={getData}
+          style={{
+            padding: '10px 20px',
+            background: '#1F6F8B',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontWeight: '600',
+          }}
+        >
+          Retry
+        </button>
+      </div>
+    )
+  }
+
+  if (isLoading || !user) return <p style={{ padding: '40px' }}>Loading...</p>
 
   return (
     <DashboardPage

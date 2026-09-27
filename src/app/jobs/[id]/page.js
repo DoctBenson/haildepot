@@ -299,26 +299,59 @@ export default function JobDetailsPage() {
           border: '1px solid #e5e7eb',
         }}
       >
-        <h2
+        <div
           style={{
-            margin: '0 0 8px',
-            color: '#0B1F2A',
-            fontSize: '1.1rem',
-            fontWeight: '800',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            gap: '16px',
+            flexWrap: 'wrap',
+            marginBottom: '16px',
           }}
         >
-          Estimates & Invoices
-        </h2>
+          <div>
+            <h2
+              style={{
+                margin: '0 0 8px',
+                color: '#0B1F2A',
+                fontSize: '1.1rem',
+                fontWeight: '800',
+              }}
+            >
+              Estimates & Invoices
+            </h2>
 
-        <p
-          style={{
-            margin: '0 0 16px',
-            color: '#6B7280',
-            fontSize: '0.9rem',
-          }}
-        >
-          Financial documents for this job will appear here.
-        </p>
+            <p
+              style={{
+                margin: 0,
+                color: '#6B7280',
+                fontSize: '0.9rem',
+              }}
+            >
+              Financial documents for this job will appear here.
+            </p>
+          </div>
+
+          {user.id === booking.tradesperson_id && (
+            <button
+              type="button"
+              onClick={() =>
+                router.push(`/estimates/new?booking_id=${booking.id}`)
+              }
+              style={{
+                padding: '10px 16px',
+                border: 'none',
+                borderRadius: '8px',
+                background: '#1F6F8B',
+                color: 'white',
+                fontWeight: '700',
+                cursor: 'pointer',
+              }}
+            >
+              Create Estimate
+            </button>
+          )}
+        </div>
 
         <div
           style={{
