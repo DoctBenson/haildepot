@@ -225,26 +225,114 @@ export default function EstimateDetailsPage() {
 
   return (
     <div
-      className="dashboard-content"
+      className="dashboard-content estimate-details-page"
       style={{ padding: '32px 20px' }}
     >
-      <button
-        type="button"
-        onClick={() => router.push('/estimates')}
+      <style jsx global>{`
+        @page {
+          size: A4;
+          margin: 16mm;
+        }
+
+        @media print {
+          html,
+          body {
+            background: #fff !important;
+          }
+
+          body * {
+            visibility: hidden !important;
+          }
+
+          .estimate-print-area,
+          .estimate-print-area * {
+            visibility: visible !important;
+          }
+
+          .estimate-print-area {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            color: #111827 !important;
+            background: #fff !important;
+            font-family: Arial, Helvetica, sans-serif !important;
+            font-size: 10pt !important;
+          }
+
+          .estimate-print-area > div {
+            margin: 0 0 8mm !important;
+            padding: 6mm !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0 !important;
+            background: #fff !important;
+            box-shadow: none !important;
+            break-inside: avoid;
+          }
+
+          .estimate-print-area h2,
+          .estimate-print-area strong,
+          .estimate-print-area p,
+          .estimate-print-area span {
+            color: #111827 !important;
+          }
+
+          .estimate-print-area .estimate-item-row {
+            grid-template-columns: minmax(0, 1fr) 48px 88px 88px !important;
+            gap: 8px !important;
+            break-inside: avoid;
+          }
+
+          .no-print {
+            display: none !important;
+          }
+        }
+      `}</style>
+
+      <div
+        className="no-print"
         style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px',
           marginBottom: '24px',
-          padding: 0,
-          border: 'none',
-          background: 'transparent',
-          color: '#1F6F8B',
-          fontWeight: '700',
-          cursor: 'pointer',
         }}
       >
-        ← Back to Estimates
-      </button>
+        <button
+          type="button"
+          onClick={() => router.push('/estimates')}
+          style={{
+            padding: 0,
+            border: 'none',
+            background: 'transparent',
+            color: '#1F6F8B',
+            fontWeight: '700',
+            cursor: 'pointer',
+          }}
+        >
+          ← Back to Estimates
+        </button>
 
-      <div style={{ marginBottom: '32px' }}>
+        <button
+          type="button"
+          onClick={() => window.print()}
+          style={{
+            padding: '9px 14px',
+            border: '1px solid #1F6F8B',
+            borderRadius: '8px',
+            background: 'white',
+            color: '#1F6F8B',
+            fontWeight: '700',
+            cursor: 'pointer',
+          }}
+        >
+          Print / Save as PDF
+        </button>
+      </div>
+
+      <div className="no-print" style={{ marginBottom: '32px' }}>
         <h1
           style={{
             margin: '0 0 8px',
@@ -266,6 +354,7 @@ export default function EstimateDetailsPage() {
         </p>
       </div>
 
+      <div className="estimate-print-area">
       <div
         style={{
           background: 'white',
@@ -601,6 +690,7 @@ export default function EstimateDetailsPage() {
           >
             {items.map((item) => (
               <div
+                className="estimate-item-row"
                 key={item.id}
                 style={{
                   display: 'grid',
@@ -825,6 +915,7 @@ export default function EstimateDetailsPage() {
           </p>
         </div>
       )}
+      </div>
     </div>
   );
 }
