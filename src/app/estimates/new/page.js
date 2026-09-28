@@ -317,9 +317,120 @@ function NewEstimateForm() {
 
   return (
     <div
-      className="dashboard-content"
+      className="dashboard-content create-estimate-page"
       style={{ padding: '32px 20px' }}
     >
+      <style jsx global>{`
+        .create-estimate-page {
+          box-sizing: border-box;
+          width: 100%;
+          min-width: 0;
+          padding: clamp(16px, 4vw, 32px) clamp(12px, 4vw, 20px) !important;
+          overflow-wrap: anywhere;
+        }
+
+        .create-estimate-page *,
+        .create-estimate-page *::before,
+        .create-estimate-page *::after {
+          box-sizing: border-box;
+          min-width: 0;
+        }
+
+        .create-estimate-page p,
+        .create-estimate-page label,
+        .create-estimate-page span,
+        .create-estimate-page strong {
+          overflow-wrap: anywhere;
+        }
+
+        .create-estimate-page input,
+        .create-estimate-page textarea {
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
+        }
+
+        .create-estimate-page .create-estimate-card {
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
+        }
+
+        .create-estimate-page .estimate-item-card {
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
+        }
+
+        .create-estimate-page .job-info-grid {
+          grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) !important;
+        }
+
+        .create-estimate-page .estimate-items-grid {
+          display: grid !important;
+          grid-template-columns: minmax(0, 2fr) minmax(64px, 0.7fr) minmax(0, 1fr) minmax(0, 1fr) auto !important;
+          align-items: end;
+        }
+
+        .create-estimate-page .estimate-details-grid {
+          grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) !important;
+        }
+
+        .create-estimate-page .estimate-rate-grid {
+          grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)) !important;
+        }
+
+        .create-estimate-page button {
+          max-width: 100%;
+          min-height: 44px;
+          white-space: normal;
+        }
+
+        @media (max-width: 760px) {
+          .create-estimate-page .estimate-items-grid {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+            grid-template-areas:
+              'description description'
+              'quantity price'
+              'total remove';
+            gap: 12px !important;
+          }
+
+          .create-estimate-page .estimate-items-grid > :nth-child(1) {
+            grid-area: description;
+          }
+
+          .create-estimate-page .estimate-items-grid > :nth-child(2) {
+            grid-area: quantity;
+          }
+
+          .create-estimate-page .estimate-items-grid > :nth-child(3) {
+            grid-area: price;
+          }
+
+          .create-estimate-page .estimate-items-grid > :nth-child(4) {
+            grid-area: total;
+          }
+
+          .create-estimate-page .estimate-items-grid > :nth-child(5) {
+            grid-area: remove;
+            align-self: end;
+          }
+
+          .create-estimate-page .estimate-details-grid {
+            grid-template-columns: minmax(0, 1fr) !important;
+          }
+
+          .create-estimate-page .create-estimate-card {
+            padding: 16px !important;
+          }
+
+          .create-estimate-page .estimate-item-card {
+            padding: 12px !important;
+          }
+        }
+      `}</style>
+
       <button
         type="button"
         onClick={() =>
@@ -365,6 +476,7 @@ function NewEstimateForm() {
 
       {error && (
         <div
+          className="create-estimate-card"
           style={{
             marginBottom: '20px',
             padding: '14px 16px',
@@ -381,6 +493,7 @@ function NewEstimateForm() {
       )}
 
       <div
+        className="create-estimate-card"
         style={{
           background: 'white',
           borderRadius: '16px',
@@ -401,6 +514,7 @@ function NewEstimateForm() {
         </h2>
 
         <div
+          className="job-info-grid"
           style={{
             display: 'grid',
             gridTemplateColumns:
@@ -528,6 +642,7 @@ function NewEstimateForm() {
       </div>
 
       <div
+        className="create-estimate-card"
         style={{
           background: 'white',
           borderRadius: '16px',
@@ -595,6 +710,7 @@ function NewEstimateForm() {
         >
           {calculatedItems.map((item, index) => (
             <div
+              className="estimate-item-card"
               key={item.id}
               style={{
                 padding: '16px',
@@ -604,10 +720,11 @@ function NewEstimateForm() {
               }}
             >
               <div
+                className="estimate-items-grid"
                 style={{
                   display: 'grid',
                   gridTemplateColumns:
-                    'minmax(180px, 2fr) minmax(100px, 0.7fr) minmax(130px, 1fr) minmax(130px, 1fr) auto',
+                    'minmax(0, 2fr) minmax(64px, 0.7fr) minmax(0, 1fr) minmax(0, 1fr) auto',
                   gap: '12px',
                   alignItems: 'end',
                 }}
@@ -791,16 +908,18 @@ function NewEstimateForm() {
       </div>
 
       <div
+        className="estimate-details-grid"
         style={{
           display: 'grid',
           gridTemplateColumns:
-            'minmax(0, 1.5fr) minmax(280px, 1fr)',
+            'minmax(0, 1.5fr) minmax(0, 1fr)',
           gap: '20px',
           alignItems: 'start',
           marginBottom: '20px',
         }}
       >
         <div
+          className="create-estimate-card"
           style={{
             background: 'white',
             borderRadius: '16px',
@@ -883,10 +1002,11 @@ function NewEstimateForm() {
           </div>
 
           <div
+            className="estimate-rate-grid"
             style={{
               display: 'grid',
               gridTemplateColumns:
-                'repeat(auto-fit, minmax(140px, 1fr))',
+                'repeat(auto-fit, minmax(min(100%, 140px), 1fr))',
               gap: '14px',
             }}
           >
@@ -964,6 +1084,7 @@ function NewEstimateForm() {
         </div>
 
         <div
+          className="create-estimate-card"
           style={{
             background: 'white',
             borderRadius: '16px',
