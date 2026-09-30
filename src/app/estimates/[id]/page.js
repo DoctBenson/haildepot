@@ -13,6 +13,8 @@ export default function EstimateDetailsPage() {
   const [items, setItems] = useState([]);
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [creatingInvoice, setCreatingInvoice] = useState(false);
+  const [invoiceError, setInvoiceError] = useState('');
 
   useEffect(() => {
     async function loadEstimate() {
@@ -109,6 +111,56 @@ export default function EstimateDetailsPage() {
       loadEstimate();
     }
   }, [id, router]);
+
+  const handleCreateInvoice = async () => {
+    if (creatingInvoice || !estimate) {
+      return;
+    }
+
+    setCreatingInvoice(true);
+    setInvoiceError('');
+
+    try {
+      const { data, error: rpcError } = await supabase.rpc(
+        'create_invoice_from_estimate',
+        { p_estimate_id: estimate.id }
+      );
+
+      if (rpcError) {
+        console.error('Failed to create invoice:', rpcError);
+        setInvoiceError(
+          rpcError.message || 'Failed to create invoice. Please try again.'
+        );
+        return;
+      }
+
+      const createdInvoice = Array.isArray(data) ? data[0] : data;
+      const invoiceId = createdInvoice?.invoice_id;
+      const hasUsableInvoiceId =
+        (typeof invoiceId === 'number' &&
+          Number.isSafeInteger(invoiceId) &&
+          invoiceId > 0) ||
+        (typeof invoiceId === 'string' && /^[1-9]\d*$/.test(invoiceId));
+
+      if (!hasUsableInvoiceId) {
+        console.error(
+          'Unexpected create_invoice_from_estimate response:',
+          data
+        );
+        setInvoiceError(
+          'No usable invoice ID was returned. Please try again.'
+        );
+        return;
+      }
+
+      router.push(`/invoices/${invoiceId}`);
+    } catch (error) {
+      console.error('Unexpected error creating invoice:', error);
+      setInvoiceError('Unable to create the invoice. Please try again.');
+    } finally {
+      setCreatingInvoice(false);
+    }
+  };
 
   const formatAmount = (amount, currency = 'GHS') => {
     const numericAmount = Number(amount || 0);
@@ -330,7 +382,37 @@ export default function EstimateDetailsPage() {
         >
           Print / Save as PDF
         </button>
+
+        {booking?.tradesperson_id === user?.id && (
+          <button
+            type="button"
+            onClick={handleCreateInvoice}
+            disabled={creatingInvoice}
+            style={{
+              padding: '9px 14px',
+              border: '1px solid #1F6F8B',
+              borderRadius: '8px',
+              background: 'white',
+              color: '#1F6F8B',
+              fontWeight: '700',
+              cursor: creatingInvoice ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {creatingInvoice ? 'Creating Invoice...' : 'Create Invoice'}
+          </button>
+        )}
       </div>
+
+      {invoiceError && (
+        <p
+          className="no-print"
+          role="alert"
+          aria-live="assertive"
+          style={{ color: '#b91c1c', margin: '0 0 16px' }}
+        >
+          {invoiceError}
+        </p>
+      )}
 
       <div className="no-print" style={{ marginBottom: '32px' }}>
         <h1
