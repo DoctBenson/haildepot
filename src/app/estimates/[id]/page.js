@@ -15,6 +15,8 @@ export default function EstimateDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [creatingInvoice, setCreatingInvoice] = useState(false);
   const [invoiceError, setInvoiceError] = useState('');
+  const [sendingEstimate, setSendingEstimate] = useState(false);
+  const [estimateError, setEstimateError] = useState('');
 
   useEffect(() => {
     async function loadEstimate() {
@@ -111,6 +113,47 @@ export default function EstimateDetailsPage() {
       loadEstimate();
     }
   }, [id, router]);
+
+  const handleSendEstimate = async () => {
+    if (
+      sendingEstimate ||
+      !estimate ||
+      !booking ||
+      booking.tradesperson_id !== user?.id ||
+      estimate.status !== 'draft'
+    ) {
+      return;
+    }
+
+    setSendingEstimate(true);
+    setEstimateError('');
+
+    try {
+      const { error: updateError } = await supabase
+        .from('estimates')
+        .update({ status: 'sent' })
+        .eq('id', estimate.id);
+
+      if (updateError) {
+        console.error('Failed to send estimate:', updateError);
+        setEstimateError(
+          updateError.message || 'Failed to send estimate. Please try again.'
+        );
+        return;
+      }
+
+      setEstimate((currentEstimate) =>
+        currentEstimate
+          ? { ...currentEstimate, status: 'sent' }
+          : currentEstimate
+      );
+    } catch (error) {
+      console.error('Unexpected error sending estimate:', error);
+      setEstimateError('Unable to send estimate. Please try again.');
+    } finally {
+      setSendingEstimate(false);
+    }
+  };
 
   const handleCreateInvoice = async () => {
     if (creatingInvoice || !estimate) {
@@ -383,6 +426,26 @@ export default function EstimateDetailsPage() {
           Print / Save as PDF
         </button>
 
+        {booking?.tradesperson_id === user?.id &&
+          estimate.status === 'draft' && (
+            <button
+              type="button"
+              onClick={handleSendEstimate}
+              disabled={sendingEstimate}
+              style={{
+                padding: '9px 14px',
+                border: '1px solid #1F6F8B',
+                borderRadius: '8px',
+                background: 'white',
+                color: '#1F6F8B',
+                fontWeight: '700',
+                cursor: sendingEstimate ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {sendingEstimate ? 'Sending...' : 'Send Estimate'}
+            </button>
+          )}
+
         {booking?.tradesperson_id === user?.id && (
           <button
             type="button"
@@ -402,6 +465,17 @@ export default function EstimateDetailsPage() {
           </button>
         )}
       </div>
+
+      {estimateError && (
+        <p
+          className="no-print"
+          role="alert"
+          aria-live="assertive"
+          style={{ color: '#b91c1c', margin: '0 0 16px' }}
+        >
+          {estimateError}
+        </p>
+      )}
 
       {invoiceError && (
         <p

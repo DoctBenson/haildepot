@@ -11,6 +11,9 @@ export default function JobDetailsPage() {
   const [user, setUser] = useState(null);
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [estimate, setEstimate] = useState(null);
+  const [estimateLoading, setEstimateLoading] = useState(true);
+  const [estimateError, setEstimateError] = useState('');
 
   useEffect(() => {
     async function loadJob() {
@@ -37,8 +40,31 @@ export default function JobDetailsPage() {
       if (error) {
         console.error('Failed to load job:', error);
         setBooking(null);
+        setEstimateLoading(false);
       } else {
         setBooking(data);
+
+        setEstimateLoading(true);
+        setEstimateError('');
+
+        const { data: estimates, error: estimateQueryError } = await supabase
+          .from('estimates')
+          .select(
+            'id, booking_id, estimate_number, status, issue_date, expiry_date, currency, total'
+          )
+          .eq('booking_id', id)
+          .order('id', { ascending: false })
+          .limit(1);
+
+        if (estimateQueryError) {
+          console.error('Failed to load estimate:', estimateQueryError);
+          setEstimate(null);
+          setEstimateError('Unable to load the estimate. Please try again.');
+        } else {
+          setEstimate(estimates?.[0] || null);
+        }
+
+        setEstimateLoading(false);
       }
 
       setLoading(false);
@@ -111,6 +137,11 @@ export default function JobDetailsPage() {
         : booking.status === 'declined'
           ? '#dc2626'
           : '#d97706';
+
+  const isTradesperson = user.id === booking.tradesperson_id;
+  const isCustomer = user.id === booking.customer_id;
+  const customerCanViewEstimate =
+    estimate && ['sent', 'approved', 'rejected', 'expired'].includes(estimate.status);
 
   return (
     <div className="dashboard-content" style={{ padding: '32px 20px' }}>
@@ -332,7 +363,7 @@ export default function JobDetailsPage() {
             </p>
           </div>
 
-          {user.id === booking.tradesperson_id && (
+          {isTradesperson && !estimateLoading && !estimateError && !estimate && (
             <button
               type="button"
               onClick={() =>
@@ -353,17 +384,74 @@ export default function JobDetailsPage() {
           )}
         </div>
 
-        <div
-          style={{
-            padding: '16px',
-            background: '#f9fafb',
-            borderRadius: '10px',
-            color: '#6B7280',
-            fontSize: '0.9rem',
-          }}
-        >
-          No estimates or invoices yet.
-        </div>
+        {estimateLoading ? (
+          <p style={{ color: '#6B7280', fontSize: '0.9rem' }}>
+            Loading estimate...
+          </p>
+        ) : estimateError ? (
+          <p role="alert" style={{ color: '#b91c1c', fontSize: '0.9rem' }}>
+            {estimateError}
+          </p>
+        ) : (
+          (isTradesperson && estimate) ||
+          (isCustomer && customerCanViewEstimate)
+        ) ? (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '16px',
+              flexWrap: 'wrap',
+              padding: '16px',
+              background: '#f9fafb',
+              borderRadius: '10px',
+            }}
+          >
+            <div>
+              <p
+                style={{
+                  margin: '0 0 6px',
+                  color: '#0B1F2A',
+                  fontWeight: '700',
+                }}
+              >
+                {estimate.estimate_number || `Estimate #${estimate.id}`}
+              </p>
+              <p style={{ margin: 0, color: '#6B7280', fontSize: '0.9rem' }}>
+                Status: {estimate.status}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => router.push(`/estimates/${estimate.id}`)}
+              style={{
+                padding: '10px 16px',
+                border: '1px solid #1F6F8B',
+                borderRadius: '8px',
+                background: 'white',
+                color: '#1F6F8B',
+                fontWeight: '700',
+                cursor: 'pointer',
+              }}
+            >
+              View Estimate
+            </button>
+          </div>
+        ) : (
+          <div
+            style={{
+              padding: '16px',
+              background: '#f9fafb',
+              borderRadius: '10px',
+              color: '#6B7280',
+              fontSize: '0.9rem',
+            }}
+          >
+            No estimates or invoices yet.
+          </div>
+        )}
       </div>
     </div>
   );
