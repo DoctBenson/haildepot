@@ -144,7 +144,14 @@ export default function RegisterPage() {
               <option value="">Select your trade</option>
               <option value="Plumber">Plumber</option>
               <option value="Electrician">Electrician</option>
+              <option value="Mason">Mason</option>
+              <option value="Carpenter">Carpenter</option>
+              <option value="Tiler">Tiler</option>
               <option value="Painter">Painter</option>
+              <option value="Welder / Metalworker">Welder / Metalworker</option>
+              <option value="Roofer">Roofer</option>
+              <option value="POP / Ceiling Installer">POP / Ceiling Installer</option>
+              <option value="Aluminium / Glass Fabricator">Aluminium / Glass Fabricator</option>
             </select>
           )}
 
