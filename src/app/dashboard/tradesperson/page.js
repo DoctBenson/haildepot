@@ -25,25 +25,6 @@ export default function TradespersonDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
   const router = useRouter()
-  const recentActivities = [
-    {
-      type: 'booking',
-      title: 'New booking request received',
-      time: 'Today',
-    },
-    {
-      type: 'completed',
-      title: 'Job marked as completed',
-      time: 'Yesterday',
-    },
-    {
-      type: 'profile',
-      title: isAvailable
-        ? 'Availability set to Available'
-        : 'Availability set to Unavailable',
-      time: 'Recently',
-    },
-  ]
   const getData = useCallback(async () => {
     setIsLoading(true)
     setLoadError('')
@@ -121,6 +102,63 @@ export default function TradespersonDashboard() {
 
     return true
   })
+
+  const activityByStatus = {
+    pending: { type: 'booking', description: 'New booking request' },
+    accepted: { type: 'booking', description: 'Booking accepted' },
+    declined: { type: 'booking', description: 'Booking declined' },
+    awaiting_confirmation: {
+      type: 'booking',
+      description: 'Work finished, awaiting customer confirmation',
+    },
+    completed: { type: 'completed', description: 'Job completed' },
+  }
+
+  const recentActivities = bookings
+    .map((booking) => {
+      const activity = activityByStatus[booking.status]
+      if (!activity || !booking.created_at) return null
+
+      const parsedTimestamp = new Date(booking.created_at)
+      if (Number.isNaN(parsedTimestamp.getTime())) return null
+
+      const now = new Date()
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      const activityDay = new Date(
+        parsedTimestamp.getFullYear(),
+        parsedTimestamp.getMonth(),
+        parsedTimestamp.getDate()
+      )
+      const yesterday = new Date(today)
+      yesterday.setDate(today.getDate() - 1)
+      const timeLabel = parsedTimestamp.toLocaleTimeString(undefined, {
+        hour: 'numeric',
+        minute: '2-digit',
+      })
+      const dateLabel =
+        activityDay.getTime() === today.getTime()
+          ? `Today, ${timeLabel}`
+          : activityDay.getTime() === yesterday.getTime()
+            ? `Yesterday, ${timeLabel}`
+            : parsedTimestamp.toLocaleDateString(undefined, {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              })
+
+      return {
+        type: activity.type,
+        title: booking.service
+          ? `${booking.service}: ${activity.description}`
+          : activity.description,
+        time: dateLabel,
+        timestampValue: parsedTimestamp.getTime(),
+      }
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.timestampValue - a.timestampValue)
+    .slice(0, 5)
+    .map(({ timestampValue, ...activity }) => activity)
 
   if (loadError) {
     return (
