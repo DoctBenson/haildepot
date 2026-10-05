@@ -1,16 +1,22 @@
 'use client'
 
+import Link from 'next/link'
+
 export default function StatsCard({
   title,
   value,
   icon,
   color = '#1F6F8B',
   onClick,
+  href,
   className = '',
 
 }) {
+  const Component = href ? Link : 'div'
+
   return (
-    <div
+    <Component
+      {...(href ? { href } : {})}
       onClick={onClick}
       className={`dashboard-stat-card ${className}`}
       style={{
@@ -79,6 +85,6 @@ export default function StatsCard({
           {icon}
         </div>
       </div>
-    </div>
+    </Component>
   )
 }

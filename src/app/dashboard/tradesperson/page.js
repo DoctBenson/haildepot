@@ -21,6 +21,8 @@ export default function TradespersonDashboard() {
   const [profile, setProfile] = useState(null)
   const [bookings, setBookings] = useState([])
   const [isAvailable, setIsAvailable] = useState(true)
+  const [availabilityUpdating, setAvailabilityUpdating] = useState(false)
+  const [availabilityError, setAvailabilityError] = useState('')
   const [filter, setFilter] = useState('all')
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
@@ -74,9 +76,27 @@ export default function TradespersonDashboard() {
   }
 
   async function toggleAvailability() {
+    if (availabilityUpdating) return
+
     const newStatus = !isAvailable
-    setIsAvailable(newStatus)
-    await supabase.from('profiles').update({ is_available: newStatus }).eq('id', user.id)
+    setAvailabilityUpdating(true)
+    setAvailabilityError('')
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ is_available: newStatus })
+        .eq('id', user.id)
+
+      if (error) throw error
+
+      setIsAvailable(newStatus)
+    } catch (error) {
+      console.error('Failed to update availability:', error)
+      setAvailabilityError('Could not update availability. Please try again.')
+    } finally {
+      setAvailabilityUpdating(false)
+    }
   }
 
   async function updateBookingStatus(id, status) {
@@ -220,7 +240,7 @@ export default function TradespersonDashboard() {
             </p>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <span style={{ color: '#6B7280', fontSize: '0.9rem' }}>Status:</span>
-              <button onClick={toggleAvailability} style={{
+              <button onClick={toggleAvailability} disabled={availabilityUpdating} style={{
                 padding: '6px 16px', borderRadius: '20px', border: 'none',
                 cursor: 'pointer', fontWeight: '700', fontSize: '0.85rem',
                 background: isAvailable ? '#dcfce7' : '#fee2e2',
@@ -230,6 +250,11 @@ export default function TradespersonDashboard() {
                 {isAvailable ? 'Available' : 'Unavailable'}
               </button>
             </div>
+            {availabilityError && (
+              <p role="alert" style={{ margin: '8px 0 0', color: '#dc2626', fontSize: '0.85rem' }}>
+                {availabilityError}
+              </p>
+            )}
           </div>
           <Link href={`/tradesperson/${user?.id}`} style={{
             padding: '10px 20px', background: '#1F6F8B', color: 'white',
@@ -245,10 +270,7 @@ export default function TradespersonDashboard() {
             value={bookings.filter(b => b.status === 'pending').length}
             icon={<Calendar size={24} color="white" />}
             color="#F59E0B"
-            onClick={() => {
-              console.log('Pending clicked')
-              setFilter('pending')
-            }}
+            href="/jobs?status=pending"
           />
 
           <StatsCard
@@ -256,10 +278,7 @@ export default function TradespersonDashboard() {
             value={bookings.filter(b => b.status === 'accepted').length}
             icon={<Wrench size={24} color="white" />}
             color="#1F6F8B"
-            onClick={() => {
-              console.log('Accepted clicked')
-              setFilter('accepted')
-            }}
+            href="/jobs?status=accepted"
           />
 
           <StatsCard
@@ -267,10 +286,7 @@ export default function TradespersonDashboard() {
             value={bookings.filter(b => b.status === 'completed').length}
             icon={<CheckCircle size={24} color="white" />}
             color="#10B981"
-            onClick={() => {
-              console.log('Completed clicked')
-              setFilter('completed')
-            }}
+            href="/jobs?status=completed"
           />
 
           <StatsCard

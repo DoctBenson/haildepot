@@ -9,6 +9,7 @@ export default function JobsPage() {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [bookings, setBookings] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -18,6 +19,10 @@ export default function JobsPage() {
     async function loadJobs() {
       setLoading(true);
       setError(null);
+
+      const requestedStatus = new URLSearchParams(window.location.search).get('status');
+      const supportedStatuses = ['pending', 'accepted', 'completed'];
+      setSelectedStatus(supportedStatuses.includes(requestedStatus) ? requestedStatus : null);
 
       const {
         data: { user },
@@ -71,6 +76,14 @@ export default function JobsPage() {
     loadJobs();
   }, [router]);
 
+  const filteredBookings = selectedStatus
+    ? bookings.filter((booking) => booking.status === selectedStatus)
+    : bookings;
+
+  const statusLabel = selectedStatus
+    ? `${selectedStatus[0].toUpperCase()}${selectedStatus.slice(1)}`
+    : null;
+
   if (loading) {
     return (
       <div style={{ padding: '40px' }}>
@@ -110,6 +123,19 @@ export default function JobsPage() {
         </p>
       </div>
 
+      {selectedStatus && (
+        <h2
+          style={{
+            margin: '0 0 16px',
+            color: '#0B1F2A',
+            fontSize: '1.1rem',
+            fontWeight: '700',
+          }}
+        >
+          {statusLabel} Jobs
+        </h2>
+      )}
+
       {error ? (
         <div
           role="alert"
@@ -123,7 +149,7 @@ export default function JobsPage() {
         >
           {error}
         </div>
-      ) : bookings.length === 0 ? (
+      ) : filteredBookings.length === 0 ? (
         <div
           style={{
             background: 'white',
@@ -139,7 +165,9 @@ export default function JobsPage() {
               color: '#6B7280',
             }}
           >
-            No jobs yet.
+            {selectedStatus
+              ? `There are no ${selectedStatus} jobs.`
+              : 'No jobs yet.'}
           </p>
         </div>
       ) : (
@@ -150,7 +178,7 @@ export default function JobsPage() {
             gap: '12px',
           }}
         >
-          {bookings.map((booking) => (
+          {filteredBookings.map((booking) => (
             <Link
               key={booking.id}
               href={`/jobs/${booking.id}`}
