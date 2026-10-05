@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { supabase } from '../supabaseClient'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { UserRound, Wrench, Eye, EyeOff } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -93,7 +94,10 @@ export default function LoginPage() {
             fontWeight: '700',
           }}
         >
-          👤 Customer
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <UserRound size={20} strokeWidth={2} />
+            Customer
+          </span>
         </button>
 
         <button
@@ -114,7 +118,10 @@ export default function LoginPage() {
             fontWeight: '700',
           }}
         >
-          🛠 Tradesperson
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <Wrench size={20} strokeWidth={2} />
+            Tradesperson
+          </span>
         </button>
       </div>
 
@@ -135,6 +142,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
             style={{
               position: 'absolute', right: '12px', top: '50%',
               transform: 'translateY(-50%)', background: 'none',
@@ -142,7 +150,7 @@ export default function LoginPage() {
               fontSize: '1.1rem'
             }}
           >
-            {showPassword ? '🙈' : '👁️'}
+            {showPassword ? <EyeOff size={20} strokeWidth={2} /> : <Eye size={20} strokeWidth={2} />}
           </button>
         </div>
         <button type="submit" disabled={loading}
