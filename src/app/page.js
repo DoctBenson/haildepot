@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
+import { UserRound, Wrench } from 'lucide-react'
 import './globals.css'
-
 export default function Home() {
   return (
     <div className="home">
@@ -149,8 +149,8 @@ export default function Home() {
                 boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
               }}
             >
-              <div style={{ fontSize: '3rem', marginBottom: '16px' }}>
-                👤
+              <div style={{ marginBottom: '16px' }}>
+                <UserRound size={48} strokeWidth={2} />
               </div>
 
               <h3
@@ -192,8 +192,8 @@ export default function Home() {
                 boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
               }}
             >
-              <div style={{ fontSize: '3rem', marginBottom: '16px' }}>
-                🛠️
+              <div style={{ marginBottom: '16px' }}>
+                <Wrench size={48} strokeWidth={2} />
               </div>
 
               <h3
@@ -248,7 +248,6 @@ export default function Home() {
         </div>
       </section>
 
-    
     </div>
   )
 }
