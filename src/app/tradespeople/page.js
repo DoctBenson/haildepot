@@ -4,17 +4,18 @@ import { useEffect, useState, Suspense } from 'react'
 import { supabase } from '../supabaseClient'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { MapPin, Wrench } from 'lucide-react'
 
 function detectTrade(query) {
   const q = query.toLowerCase()
   if (q.includes('pipe') || q.includes('leak') || q.includes('plumb') ||
-      q.includes('water') || q.includes('tap') || q.includes('toilet') ||
-      q.includes('drain') || q.includes('cistern')) return 'Plumber'
+    q.includes('water') || q.includes('tap') || q.includes('toilet') ||
+    q.includes('drain') || q.includes('cistern')) return 'Plumber'
   if (q.includes('electric') || q.includes('wire') || q.includes('socket') ||
-      q.includes('light') || q.includes('switch') || q.includes('power') ||
-      q.includes('fault') || q.includes('bulb')) return 'Electrician'
+    q.includes('light') || q.includes('switch') || q.includes('power') ||
+    q.includes('fault') || q.includes('bulb')) return 'Electrician'
   if (q.includes('paint') || q.includes('wall') || q.includes('colour') ||
-      q.includes('color') || q.includes('ceiling') || q.includes('coat')) return 'Painter'
+    q.includes('color') || q.includes('ceiling') || q.includes('coat')) return 'Painter'
   return null
 }
 
@@ -97,10 +98,21 @@ function TradespeopleContent() {
             outline: 'none', boxSizing: 'border-box'
           }}
         />
-
         {/* Filter buttons */}
         <div style={{ display: 'flex', gap: '10px', marginBottom: '24px', flexWrap: 'wrap' }}>
-          {['All', 'Plumber', 'Electrician', 'Painter'].map(type => (
+          {[
+            'All',
+            'Plumber',
+            'Electrician',
+            'Mason',
+            'Carpenter',
+            'Tiler',
+            'Painter',
+            'Welder / Metalworker',
+            'Roofer',
+            'POP / Ceiling Installer',
+            'Aluminium / Glass Fabricator',
+          ].map(type => (
             <button
               key={type}
               onClick={() => setFilter(type)}
@@ -118,22 +130,23 @@ function TradespeopleContent() {
           ))}
         </div>
 
+
         {loading ? (
-  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
-    {[1,2,3,4,5,6].map(i => (
-      <div key={i} style={{ background: '#0B1F2A', borderRadius: '20px', overflow: 'hidden', opacity: 0.6 }}>
-        <div style={{ width: '100%', height: '220px', background: 'linear-gradient(90deg, #1a2f3d 25%, #1F6F8B 50%, #1a2f3d 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite' }} />
-        <div style={{ padding: '20px' }}>
-          <div style={{ height: '20px', background: '#1a2f3d', borderRadius: '8px', marginBottom: '12px', width: '70%' }} />
-          <div style={{ height: '14px', background: '#1a2f3d', borderRadius: '8px', marginBottom: '8px', width: '50%' }} />
-          <div style={{ height: '14px', background: '#1a2f3d', borderRadius: '8px', width: '90%' }} />
-        </div>
-      </div>
-    ))}
-  </div>
-) : filtered.length === 0 ? (
-           <p style={{ color: '#6B7280' }}>No tradespeople found.</p>
-) :       (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <div key={i} style={{ background: '#0B1F2A', borderRadius: '20px', overflow: 'hidden', opacity: 0.6 }}>
+                <div style={{ width: '100%', height: '220px', background: 'linear-gradient(90deg, #1a2f3d 25%, #1F6F8B 50%, #1a2f3d 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite' }} />
+                <div style={{ padding: '20px' }}>
+                  <div style={{ height: '20px', background: '#1a2f3d', borderRadius: '8px', marginBottom: '12px', width: '70%' }} />
+                  <div style={{ height: '14px', background: '#1a2f3d', borderRadius: '8px', marginBottom: '8px', width: '50%' }} />
+                  <div style={{ height: '14px', background: '#1a2f3d', borderRadius: '8px', width: '90%' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <p style={{ color: '#6B7280' }}>No tradespeople found.</p>
+        ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
             {filtered.map(person => (
               <div key={person.id} style={{
@@ -183,11 +196,28 @@ function TradespeopleContent() {
                     )}
                   </div>
 
-                  <p style={{ margin: '0 0 4px', color: '#6B7280', fontSize: '0.85rem' }}>📍 {person.location}</p>
-
+                  <p style={{
+                    margin: '0 0 4px',
+                    color: '#6B7280',
+                    fontSize: '0.85rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                    <MapPin size={14} strokeWidth={2} />
+                    {person.location}
+                  </p>
                   {person.years_experience && (
-                    <p style={{ margin: '0 0 4px', color: '#9ca3af', fontSize: '0.85rem' }}>
-                      🛠 {person.years_experience} years experience
+                    <p style={{
+                      margin: '0 0 4px',
+                      color: '#9ca3af',
+                      fontSize: '0.85rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}>
+                      <Wrench size={14} strokeWidth={2} />
+                      {person.years_experience} years experience
                     </p>
                   )}
 
