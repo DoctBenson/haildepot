@@ -5,19 +5,71 @@ import { supabase } from '../supabaseClient'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { MapPin, Wrench } from 'lucide-react'
-
 function detectTrade(query) {
   const q = query.toLowerCase()
-  if (q.includes('pipe') || q.includes('leak') || q.includes('plumb') ||
+
+  if (
+    q.includes('pipe') || q.includes('leak') || q.includes('plumb') ||
     q.includes('water') || q.includes('tap') || q.includes('toilet') ||
-    q.includes('drain') || q.includes('cistern')) return 'Plumber'
-  if (q.includes('electric') || q.includes('wire') || q.includes('socket') ||
+    q.includes('drain') || q.includes('cistern') || q.includes('water heater') ||
+    q.includes('faucet') || q.includes('bathroom fitting')
+  ) return 'Plumber'
+
+  if (
+    q.includes('electric') || q.includes('wire') || q.includes('socket') ||
     q.includes('light') || q.includes('switch') || q.includes('power') ||
-    q.includes('fault') || q.includes('bulb')) return 'Electrician'
-  if (q.includes('paint') || q.includes('wall') || q.includes('colour') ||
-    q.includes('color') || q.includes('ceiling') || q.includes('coat')) return 'Painter'
+    q.includes('fault') || q.includes('bulb') || q.includes('wiring')
+  ) return 'Electrician'
+
+  if (
+    q.includes('mason') || q.includes('masonry') || q.includes('brick') ||
+    q.includes('block work') || q.includes('concrete') || q.includes('cement') ||
+    q.includes('foundation') || q.includes('plaster')
+  ) return 'Mason'
+
+  if (
+    q.includes('carpenter') || q.includes('carpentry') || q.includes('woodwork') ||
+    q.includes('cabinet') || q.includes('door frame') || q.includes('wooden door') ||
+    q.includes('furniture')
+  ) return 'Carpenter'
+
+  if (
+    q.includes('tiler') || q.includes('tiling') || q.includes('tile') ||
+    q.includes('floor tile') || q.includes('wall tile')
+  ) return 'Tiler'
+
+  if (
+    q.includes('paint') || q.includes('wall') || q.includes('coat') ||
+    q.includes('colour') || q.includes('color') ||
+    q.includes('painting') || q.includes('repaint')
+  ) return 'Painter'
+
+  if (
+    q.includes('welder') || q.includes('welding') || q.includes('metalwork') ||
+    q.includes('metal work') || q.includes('wrought iron') ||
+    q.includes('metal gate') || q.includes('steel gate')
+  ) return 'Welder / Metalworker'
+
+  if (
+    q.includes('roof') || q.includes('roofer') || q.includes('roofing') ||
+    q.includes('roof leak') || q.includes('ceiling leak') || q.includes('gutter')
+  ) return 'Roofer'
+
+  if (
+    q.includes('pop') || q.includes('plasterboard') ||
+    q.includes('false ceiling') || q.includes('suspended ceiling') ||
+    q.includes('ceiling installer') || q.includes('ceiling installation')
+  ) return 'POP / Ceiling Installer'
+
+  if (
+    q.includes('aluminium') || q.includes('aluminum') ||
+    q.includes('glass') || q.includes('window frame') ||
+    q.includes('sliding window') || q.includes('glass door')
+  ) return 'Aluminium / Glass Fabricator'
+
   return null
 }
+
 
 function TradespeopleContent() {
   const [tradespeople, setTradespeople] = useState([])
@@ -40,8 +92,11 @@ function TradespeopleContent() {
   }, [searchParams])
 
   useEffect(() => {
+    let cancelled = false
+
     async function fetchTradespeople() {
       setLoading(true)
+
       let query = supabase
         .from('profiles')
         .select('*')
@@ -53,10 +108,24 @@ function TradespeopleContent() {
       }
 
       const { data, error } = await query
-      if (!error) setTradespeople(data)
+
+      if (cancelled) return
+
+      if (!error) {
+        setTradespeople(data || [])
+      } else {
+        console.error('Error fetching tradespeople:', error)
+        setTradespeople([])
+      }
+
       setLoading(false)
     }
+
     fetchTradespeople()
+
+    return () => {
+      cancelled = true
+    }
   }, [filter])
 
   const filtered = tradespeople.filter(person =>
