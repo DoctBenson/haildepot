@@ -1,6 +1,17 @@
 'use client'
 import Link from 'next/link'
-import { UserRound, Wrench } from 'lucide-react'
+import {
+  UserRound,
+  Wrench,
+  Zap,
+  BrickWall,
+  Hammer,
+  PaintRoller,
+  Grid2X2,
+  House,
+  PanelsTopLeft,
+  DoorOpen,
+} from 'lucide-react'
 import './globals.css'
 export default function Home() {
   return (
@@ -93,6 +104,103 @@ export default function Home() {
         </div>
       </section>
 
+      <section
+        style={{
+          padding: '64px 20px',
+          background: '#FFFFFF',
+        }}
+      >
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+            <h2
+              style={{
+                fontSize: '2rem',
+                fontWeight: '800',
+                color: '#0B1F2A',
+                marginBottom: '12px',
+              }}
+            >
+              Explore Services
+            </h2>
+            <p
+              style={{
+                color: '#6B7280',
+                fontSize: '1rem',
+                maxWidth: '620px',
+                margin: '0 auto',
+                lineHeight: 1.6,
+              }}
+            >
+              Find the right professional for your home improvement and repair needs.
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 190px), 1fr))',
+              gap: '16px',
+            }}
+          >
+            {[
+              { name: 'Plumber', icon: Wrench },
+              { name: 'Electrician', icon: Zap },
+              { name: 'Mason', icon: BrickWall },
+              { name: 'Carpenter', icon: Hammer },
+              { name: 'Tiler', icon: Grid2X2 },
+              { name: 'Painter', icon: PaintRoller },
+              { name: 'Welder / Metalworker', icon: Wrench },
+              { name: 'Roofer', icon: House },
+              { name: 'POP / Ceiling Installer', icon: PanelsTopLeft },
+              { name: 'Aluminium / Glass Fabricator', icon: DoorOpen },
+            ].map(({ name, icon: Icon }) => (
+              <Link
+                key={name}
+                href={`/tradespeople?service=${encodeURIComponent(name)}`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '14px',
+                  padding: '20px 16px',
+                  border: '1px solid #E5E7EB',
+                  borderRadius: '14px',
+                  background: '#FFFFFF',
+                  color: '#0B1F2A',
+                  textDecoration: 'none',
+                  minWidth: 0,
+                  transition: 'border-color 0.2s, box-shadow 0.2s',
+                }}
+              >
+                <span
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    flexShrink: 0,
+                    borderRadius: '12px',
+                    background: '#EAF4F7',
+                    color: '#1F6F8B',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Icon size={22} strokeWidth={1.8} />
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.95rem',
+                    fontWeight: '600',
+                    lineHeight: 1.4,
+                    overflowWrap: 'anywhere',
+                  }}
+                >
+                  {name}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section
         style={{
