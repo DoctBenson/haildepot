@@ -128,9 +128,20 @@ function TradespeopleContent() {
     }
   }, [filter])
 
-  const filtered = tradespeople.filter(person =>
-    person.full_name?.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = tradespeople.filter(person => {
+    const term = search.trim().toLowerCase()
+
+    if (!term) return true
+
+    return [
+      person.full_name,
+      person.trade,
+      person.location,
+      person.bio,
+    ].some(value =>
+      value?.toLowerCase().includes(term)
+    )
+  })
 
   return (
     <div style={{ minHeight: '100vh', background: '#f9fafb' }}>
