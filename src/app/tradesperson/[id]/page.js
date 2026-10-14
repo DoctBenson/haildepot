@@ -2,9 +2,24 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../../supabaseClient'
+
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { use } from 'react'
+
+import {
+  ArrowLeft,
+  BadgeCheck,
+  CircleCheck,
+  CircleX,
+  MapPin,
+  Phone,
+  ShieldCheck,
+  Star,
+  Wallet,
+} from 'lucide-react'
+
+
 
 export default function TradespersonProfile({ params }) {
   const { id } = use(params)
@@ -13,6 +28,8 @@ export default function TradespersonProfile({ params }) {
   const [currentUser, setCurrentUser] = useState(null)
   const [isOwner, setIsOwner] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
   const [uploading, setUploading] = useState(false)
   const router = useRouter()
 
@@ -54,14 +71,48 @@ export default function TradespersonProfile({ params }) {
     getData()
   }, [])
 
+
   async function handleSaveProfile() {
-    await supabase.from('profiles').update({
-      bio, rate, years_experience: yearsExperience,
-      response_time: responseTime, warranty
-    }).eq('id', id)
-    setTradesperson({ ...tradesperson, bio, rate, years_experience: yearsExperience, response_time: responseTime, warranty })
-    setEditing(false)
+    if (saving) return
+
+    setSaving(true)
+    setSaveError('')
+
+    const updates = {
+      bio,
+      rate,
+      years_experience: yearsExperience,
+      response_time: responseTime,
+      warranty,
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (error) {
+        throw error
+      }
+
+      setTradesperson({ ...tradesperson, ...data })
+      setBio(data.bio || '')
+      setRate(data.rate || '')
+      setYearsExperience(data.years_experience || '')
+      setResponseTime(data.response_time || '')
+      setWarranty(data.warranty || '')
+      setEditing(false)
+    } catch (error) {
+      console.error('Failed to save profile:', error)
+      setSaveError('Could not save your changes. Please try again.')
+    } finally {
+      setSaving(false)
+    }
   }
+
 
   async function handlePhotoUpload(e) {
     const file = e.target.files[0]
@@ -106,7 +157,12 @@ export default function TradespersonProfile({ params }) {
           background: 'none', border: '1.5px solid #e5e7eb',
           borderRadius: '24px', padding: '8px 16px',
           color: '#0B1F2A', cursor: 'pointer', fontWeight: '600'
-        }}>← Back</button>
+
+        }}>
+          <ArrowLeft size={16} aria-hidden="true" />
+          Back
+        </button>
+
       </nav>
 
       <div style={{ maxWidth: '750px', margin: '0 auto', padding: '32px 20px' }}>
@@ -147,18 +203,35 @@ export default function TradespersonProfile({ params }) {
             </div>
 
             <div style={{ flex: 1 }}>
+
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                <h2 style={{ margin: '0', color: '#0B1F2A', fontSize: '1.6rem', fontWeight: '800' }}>
+                <h2 style={{
+                  margin: '0',
+                  color: '#0B1F2A',
+                  fontSize: '1.6rem',
+                  fontWeight: '800'
+                }}>
                   {tradesperson.full_name}
                 </h2>
+
                 {tradesperson.is_verified && (
                   <span style={{
-                    background: '#1F6F8B', color: 'white',
-                    padding: '3px 10px', borderRadius: '20px',
-                    fontSize: '0.75rem', fontWeight: '700'
-                  }}>✓ Verified</span>
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    background: '#1F6F8B',
+                    color: 'white',
+                    padding: '3px 10px',
+                    borderRadius: '20px',
+                    fontSize: '0.75rem',
+                    fontWeight: '700'
+                  }}>
+                    <BadgeCheck size={15} aria-hidden="true" />
+                    Verified
+                  </span>
                 )}
               </div>
+
               <p style={{ margin: '4px 0', color: '#1F6F8B', fontWeight: '600', fontSize: '1rem' }}>{tradesperson.trade}</p>
 
               <div
@@ -175,14 +248,49 @@ export default function TradespersonProfile({ params }) {
                   fontSize: '0.85rem'
                 }}
               >
-                {tradesperson.is_available ? '🟢 Available' : '🔴 Busy'}
+
+                {tradesperson.is_available ? (
+                  <>
+                    <CircleCheck size={15} aria-hidden="true" />
+                    Available
+                  </>
+                ) : (
+                  <>
+                    <CircleX size={15} aria-hidden="true" />
+                    Busy
+                  </>
+                )}
+
               </div>
 
-              <p style={{ margin: '4px 0', color: '#6B7280', fontSize: '0.9rem' }}>📍 {tradesperson.location}</p>
+
+              <p style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                margin: '4px 0',
+                color: '#6B7280',
+                fontSize: '0.9rem'
+              }}>
+                <MapPin size={15} aria-hidden="true" />
+                {tradesperson.location}
+              </p>
+
 
               {avgRating && (
-                <p style={{ margin: '4px 0', color: '#0B1F2A', fontWeight: '700' }}>
-                  ⭐ {avgRating} <span style={{ color: '#6B7280', fontWeight: '400' }}>({reviews.length} reviews)</span>
+                <p style={{
+                  margin: '4px 0', color: '#0B1F2A', fontWeight: '700',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}>
+
+                  <Star size={16} fill="#F59E0B" color="#F59E0B" aria-hidden="true" />
+                  {avgRating}
+                  <span style={{ color: '#6B7280', fontWeight: '400' }}>
+                    ({reviews.length} reviews)
+                  </span>
+
                 </p>
               )}
             </div>
@@ -211,8 +319,18 @@ export default function TradespersonProfile({ params }) {
             )}
             {avgRating && (
               <div style={{ background: '#f9fafb', borderRadius: '12px', padding: '14px', textAlign: 'center' }}>
-                <p style={{ margin: '0 0 4px', fontSize: '1.3rem', fontWeight: '800', color: '#0B1F2A' }}>
-                  {avgRating}⭐
+                <p style={{
+                  margin: '0 0 4px',
+                  fontSize: '1.3rem',
+                  fontWeight: '800',
+                  color: '#0B1F2A',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                }}>
+                  <Star size={18} fill="#F59E0B" color="#F59E0B" aria-hidden="true" />
+                  {avgRating}
                 </p>
                 <p style={{ margin: '0', fontSize: '0.8rem', color: '#6B7280' }}>Rating</p>
               </div>
@@ -233,8 +351,14 @@ export default function TradespersonProfile({ params }) {
               <input placeholder="Your rate e.g. GH₵150/hr" value={rate} onChange={e => setRate(e.target.value)}
                 style={{ width: '100%', padding: '10px', border: '1.5px solid #1F6F8B', borderRadius: '8px', fontSize: '1rem', boxSizing: 'border-box' }} />
             ) : (
-              <p style={{ margin: '0', fontWeight: '800', color: '#0B1F2A', fontSize: '1.1rem' }}>
-                💰 {tradesperson.rate || 'Rate not set'}
+              <p style={{
+                margin: '0', fontWeight: '800', color: '#0B1F2A', fontSize: '1.1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}>
+                <Wallet size={18} aria-hidden="true" />
+                {tradesperson.rate || 'Rate not set'}
               </p>
             )}
           </div>
@@ -260,7 +384,13 @@ export default function TradespersonProfile({ params }) {
                 <input placeholder="e.g. 3 months warranty on all work" value={warranty} onChange={e => setWarranty(e.target.value)}
                   style={{ width: '100%', padding: '12px', border: '1.5px solid #1F6F8B', borderRadius: '12px', fontSize: '0.95rem', boxSizing: 'border-box' }} />
               ) : (
-                <p style={{ margin: '0', color: '#6B7280' }}>🛡️ {tradesperson.warranty}</p>
+                <p style={{
+                  margin: '0', color: '#6B7280',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}><ShieldCheck size={16} aria-hidden="true" />
+                  {tradesperson.warranty}</p>
               )}
             </div>
           )}
@@ -275,19 +405,64 @@ export default function TradespersonProfile({ params }) {
             </div>
           )}
 
+
+          {saveError && (
+            <p
+              role="alert"
+              style={{
+                margin: '0 0 12px',
+                padding: '12px',
+                background: '#FEF2F2',
+                color: '#B91C1C',
+                border: '1px solid #FECACA',
+                borderRadius: '8px',
+                fontSize: '0.9rem',
+              }}
+            >
+              {saveError}
+            </p>
+          )}
+
+
           {/* Action Buttons */}
           {isOwner ? (
             <div style={{ display: 'flex', gap: '12px' }}>
               {editing ? (
                 <>
-                  <button onClick={handleSaveProfile} style={{
-                    flex: 1, padding: '12px', background: '#1F6F8B', color: 'white',
-                    border: 'none', borderRadius: '12px', fontWeight: '700', cursor: 'pointer'
-                  }}>Save Changes</button>
-                  <button onClick={() => setEditing(false)} style={{
-                    padding: '12px 20px', background: 'transparent',
-                    border: '1.5px solid #e5e7eb', borderRadius: '12px', cursor: 'pointer', color: '#6B7280'
-                  }}>Cancel</button>
+
+                  <button
+                    onClick={handleSaveProfile}
+                    disabled={saving}
+                    style={{
+                      flex: 1,
+                      padding: '12px',
+                      background: saving ? '#6B7280' : '#1F6F8B',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '12px',
+                      fontWeight: '700',
+                      cursor: saving ? 'not-allowed' : 'pointer',
+                      opacity: saving ? 0.7 : 1,
+                    }}
+                  >
+                    {saving ? 'Saving...' : 'Save Changes'}
+                  </button>
+
+                  <button
+                    disabled={saving}
+                    onClick={() => {
+                      setBio(tradesperson.bio || '')
+                      setRate(tradesperson.rate || '')
+                      setYearsExperience(tradesperson.years_experience || '')
+                      setResponseTime(tradesperson.response_time || '')
+                      setWarranty(tradesperson.warranty || '')
+                      setSaveError('')
+                      setEditing(false)
+                    }}
+                    style={{
+                      padding: '12px 20px', background: 'transparent',
+                      border: '1.5px solid #e5e7eb', borderRadius: '12px', cursor: 'pointer', color: '#6B7280'
+                    }}>Cancel</button>
                 </>
               ) : (
                 <button onClick={() => setEditing(true)} style={{
@@ -313,7 +488,15 @@ export default function TradespersonProfile({ params }) {
                     background: '#0B1F2A', color: 'white', borderRadius: '12px',
                     textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem'
                   }}>
-                    📞 Call
+                    <span style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                    }}>
+                      <Phone size={16} aria-hidden="true" />
+                      Call
+                    </span>
                   </a>
                   <a href={`https://wa.me/${tradesperson.phone.replace(/\D/g, '')}`}
                     target="_blank" rel="noopener noreferrer"
@@ -322,7 +505,25 @@ export default function TradespersonProfile({ params }) {
                       background: '#25D366', color: 'white', borderRadius: '12px',
                       textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem'
                     }}>
-                    💬 WhatsApp
+
+                    <span style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                    }}>
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path d="M20.52 3.48A11.8 11.8 0 0 0 12.05 0C5.5 0 .17 5.33.17 11.88c0 2.09.55 4.13 1.59 5.93L.07 24l6.34-1.66a11.9 11.9 0 0 0 5.64 1.43h.01c6.55 0 11.88-5.33 11.88-11.88 0-3.17-1.23-6.15-3.42-8.41ZM12.06 21.7a9.8 9.8 0 0 1-4.99-1.37l-.36-.21-3.76.99 1-3.66-.24-.38a9.79 9.79 0 1 1 8.35 4.63Zm5.37-7.33c-.29-.15-1.72-.85-1.99-.95-.27-.1-.46-.15-.65.15-.19.29-.75.95-.92 1.14-.17.19-.34.22-.63.07-.29-.15-1.22-.45-2.32-1.43-.86-.77-1.44-1.72-1.61-2.01-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.19-.29.29-.49.1-.19.05-.37-.02-.51-.07-.15-.65-1.57-.89-2.15-.23-.56-.47-.49-.65-.5h-.56c-.19 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43s1.05 2.82 1.19 3.02c.15.19 2.06 3.15 4.99 4.41.7.3 1.25.48 1.68.61.71.23 1.36.2 1.87.12.57-.08 1.72-.7 1.96-1.38.24-.68.24-1.26.17-1.38-.07-.12-.27-.19-.56-.34Z" />
+                      </svg>
+                      WhatsApp
+                    </span>
+
                   </a>
                 </div>
               )}
@@ -343,8 +544,20 @@ export default function TradespersonProfile({ params }) {
                 <div key={index} style={{
                   background: '#f9fafb', borderRadius: '12px', padding: '16px'
                 }}>
-                  <p style={{ margin: '0 0 6px', fontWeight: '700', color: '#0B1F2A' }}>
-                    {'⭐'.repeat(review.rating)}
+                  <p style={{
+                    margin: '0 0 6px', fontWeight: '700', color: '#0B1F2A', display: 'flex',
+                    alignItems: 'center',
+                    gap: '3px',
+                  }}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        size={16}
+                        fill={star <= review.rating ? '#F59E0B' : 'none'}
+                        color={star <= review.rating ? '#F59E0B' : '#D1D5DB'}
+                        aria-hidden="true"
+                      />
+                    ))}
                   </p>
                   <p style={{ margin: '0', color: '#6B7280', fontSize: '0.9rem' }}>{review.comment}</p>
                 </div>
