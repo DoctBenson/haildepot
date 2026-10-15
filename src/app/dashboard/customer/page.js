@@ -100,7 +100,7 @@ export default function CustomerDashboard() {
   )
 )
 
-    alert('✅ Job confirmed successfully.')
+   alert('Job confirmed successfully.')
   }
 
 

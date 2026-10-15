@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../supabaseClient'
 import { useRouter } from 'next/navigation'
-
+import { MapPin } from 'lucide-react'
 import { use } from 'react'
 
 export default function BookPage({ params }) {
@@ -74,7 +74,19 @@ export default function BookPage({ params }) {
       <div style={{ background: '#EAF4F7', border: '1px solid #1F6F8B', borderRadius: '12px', padding: '16px', marginBottom: '24px' }}>
         <h3 style={{ margin: '0 0 4px', color: '#0B1F2A' }}>{tradesperson.full_name}</h3>
         <p style={{ margin: '0 0 4px', color: '#1F6F8B', fontWeight: '600' }}>{tradesperson.trade}</p>
-        <p style={{ margin: '0', color: '#6B7280', fontSize: '0.9rem' }}>📍 {tradesperson.location}</p>
+        <p
+          style={{
+            margin: '0',
+            color: '#6B7280',
+            fontSize: '0.9rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+          }}
+        >
+          <MapPin size={15} aria-hidden="true" />
+          {tradesperson.location}
+        </p>
       </div>
 
       {error && <p style={{ color: 'red', marginBottom: '16px' }}>{error}</p>}

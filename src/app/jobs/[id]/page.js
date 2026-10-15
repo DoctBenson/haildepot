@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import { useParams, useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
+
 
 export default function JobDetailsPage() {
   const { id } = useParams();
@@ -156,9 +158,12 @@ export default function JobDetailsPage() {
           color: '#1F6F8B',
           fontWeight: '700',
           cursor: 'pointer',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
         }}
       >
-        ← Back to Jobs
+        <ArrowLeft size={16} aria-hidden="true" /> Back to Jobs
       </button>
 
       <div style={{ marginBottom: '32px' }}>

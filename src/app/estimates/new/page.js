@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react'
 
 function NewEstimateForm() {
   const router = useRouter();
@@ -130,9 +131,9 @@ function NewEstimateForm() {
       currentItems.map((item) =>
         item.id === itemId
           ? {
-              ...item,
-              [field]: value,
-            }
+            ...item,
+            [field]: value,
+          }
           : item
       )
     );
@@ -446,9 +447,13 @@ function NewEstimateForm() {
           color: '#1F6F8B',
           fontWeight: '700',
           cursor: 'pointer',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
         }}
       >
-        ← Back to Job
+        <ArrowLeft size={16} aria-hidden="true" />
+        Back to Job
       </button>
 
       <div style={{ marginBottom: '32px' }}>
