@@ -129,7 +129,7 @@ if (existingReview) {
                 transition: 'opacity 0.2s'
               }}
             >
-              ⭐
+              <Star size={28} fill={star <= rating ? '#F59E0B' : 'none'} color={star <= rating ? '#F59E0B' : '#9CA3AF'} aria-hidden="true" />
             </button>
           ))}
         </div>

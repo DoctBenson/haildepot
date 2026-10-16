@@ -407,7 +407,7 @@ export default function EstimateDetailsPage() {
             cursor: 'pointer',
           }}
         >
-          ← Back to Estimates
+          Back to Estimates
         </button>
 
         <button
