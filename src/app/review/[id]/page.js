@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../supabaseClient'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { use, Suspense } from 'react'
+import { Star } from 'lucide-react'
 
 function ReviewContent({ params }) {
   const { id } = use(params)
@@ -60,7 +61,7 @@ if (existingReview) {
       comment
     })
 
-    alert('⭐ Thank you! Your review has been submitted.')
+    alert('Thank you! Your review has been submitted.')
 
     router.push('/dashboard/customer')
   } catch (error) {
