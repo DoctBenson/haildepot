@@ -250,6 +250,7 @@ export default function TradespersonDashboard() {
             })
 
       return {
+        bookingId: booking.id,
         type: activity.type,
         title: booking.service
           ? `${booking.service}: ${activity.description}`
@@ -382,11 +383,46 @@ export default function TradespersonDashboard() {
             color={isAvailable === true ? '#10B981' : '#6B7280'}
           />
         </div>
-
         <div>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#0B1F2A', marginBottom: '16px' }}>
-            Incoming Bookings
-          </h2>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '12px',
+              marginBottom: '16px',
+            }}
+          >
+            <h2
+              style={{
+                fontSize: '1.1rem',
+                fontWeight: '700',
+                color: '#0B1F2A',
+                margin: 0,
+              }}
+            >
+              Incoming Bookings
+            </h2>
+
+            <Link
+              href="/jobs"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                color: '#1F6F8B',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                textDecoration: 'none',
+                padding: '6px 0',
+              }}
+            >
+              View all bookings
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+
           {filteredBookings.length === 0 ? (
             <div style={{
               background: 'white', borderRadius: '16px', padding: '40px',
