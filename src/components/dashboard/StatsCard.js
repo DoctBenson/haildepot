@@ -1,7 +1,5 @@
 'use client'
-
 import Link from 'next/link'
-
 export default function StatsCard({
   title,
   value,
@@ -10,14 +8,15 @@ export default function StatsCard({
   onClick,
   href,
   className = '',
-
 }) {
-  const Component = href ? Link : 'div'
+  const isInteractive = Boolean(href || onClick)
+  const Component = href ? Link : onClick ? 'button' : 'div'
 
   return (
     <Component
       {...(href ? { href } : {})}
-      onClick={onClick}
+      {...(onClick && !href ? { type: 'button' } : {})}
+      {...(onClick && !href ? { onClick } : {})}
       className={`dashboard-stat-card ${className}`}
       style={{
         background: '#FFFFFF',
@@ -25,17 +24,24 @@ export default function StatsCard({
         borderRadius: '18px',
         padding: '24px',
         boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-        transition: 'all 0.2s ease',
-        cursor: 'pointer',
+        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+        cursor: isInteractive ? 'pointer' : 'default',
+        textDecoration: 'none',
+        ...(onClick && !href ? { width: '100%', textAlign: 'left', font: 'inherit' } : {}),
+        color: 'inherit',
       }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-4px)'
-        e.currentTarget.style.boxShadow =
+      onMouseEnter={(event) => {
+        if (!isInteractive) return
+
+        event.currentTarget.style.transform = 'translateY(-4px)'
+        event.currentTarget.style.boxShadow =
           '0 10px 24px rgba(0,0,0,0.08)'
       }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'translateY(0)'
-        e.currentTarget.style.boxShadow =
+      onMouseLeave={(event) => {
+        if (!isInteractive) return
+
+        event.currentTarget.style.transform = 'translateY(0)'
+        event.currentTarget.style.boxShadow =
           '0 4px 12px rgba(0,0,0,0.05)'
       }}
     >
@@ -44,6 +50,7 @@ export default function StatsCard({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          gap: '12px',
         }}
       >
         <div>
@@ -71,15 +78,16 @@ export default function StatsCard({
         </div>
 
         <div
+          aria-hidden="true"
           style={{
             width: '56px',
             height: '56px',
+            flexShrink: 0,
             borderRadius: '16px',
             background: color,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '1.5rem',
           }}
         >
           {icon}
